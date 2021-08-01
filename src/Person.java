@@ -11,7 +11,7 @@
 
 public class Person
 {
-	
+	// TODO: Statistics analysis
 	protected boolean isAlive;
 	protected boolean isInfected;
 	protected int immunityStatus;
