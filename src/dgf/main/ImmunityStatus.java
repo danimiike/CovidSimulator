@@ -1,7 +1,12 @@
+package dgf.main;
+
 /**
- * Program Name: ImunityStatus.java
+ * Program Name: dgf.main.ImmunityStatus.java
  * Purpose: put something useful
- * Coder: Danielle Miike
+ * Coder: 	Danielle Miike
+ * 			Felipe Leite
+ * 			Georgia Patten
+ *
  * Date: Aug 1, 2021
  */
 
