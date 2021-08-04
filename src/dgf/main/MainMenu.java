@@ -11,6 +11,7 @@ package dgf.main;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -19,14 +20,13 @@ import javax.swing.event.*;
 
 
 public class MainMenu extends JFrame {
-    private GUISimulator guiSimulator;
 
     private JSlider s1, s2, s3, s4, s5;
     private JLabel L1, L2, L3, L4, L5;
     private JLabel s1StatusLabel, s2StatusLabel, s3StatusLabel, s4StatusLabel, s5StatusLabel;
     private JPanel panel1, panel2, panel2_0, panel2_1, panel3, panel4, panel5;
-    private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
-    private JButton B;
+ //   private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
+    JButton B;
 
     Font font = new Font("Times New Roman", Font.PLAIN, 20);
     Font sliderFont = new Font("Times New Roman", Font.PLAIN, 8);
@@ -167,30 +167,18 @@ public class MainMenu extends JFrame {
         this.setVisible(true);
     }//end constructor
 
-
     private class MyJButtonListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-
-            qtyPerson = s1.getValue();
-            popNoShot = s2.getValue();
-            popOneShot = s3.getValue();
-            popTwoShot = s4.getValue();
-            popNatImmunity = s5.getValue();
-
-            //	try
-            //	{	ver como iremos tratar isso, se for menor que 100 vamos assumir que o resto nao esta vacinado, por exemplo?
-            if (popNoShot + popOneShot + popTwoShot + popNatImmunity > 100) {
-                JOptionPane.showInternalMessageDialog(contentPane, "The sum of levels of immunity should be 100 or less.");
-            }
-            else {
-                guiSimulator = new GUISimulator();
-            }
-
-
-        }
-    } //end class
-
+    	
+    	public void actionPerformed(ActionEvent e) {
+    	
+    		//boolean isclicked = true;
+    		JOptionPane.showInternalMessageDialog(contentPane, "Botao clicado");
+    		//CHAMA O GUI SIMULATOR\
+    		ArrayList<Person> arrayList = new ArrayList<>();
+    		arrayList.add(new Person(true,true,1,0,0,2,false,false));
+    		new GUISimulator(arrayList);
+    	}
+    }
 
     public static void main(String[] args) {
 

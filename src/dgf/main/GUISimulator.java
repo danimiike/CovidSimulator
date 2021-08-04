@@ -1,24 +1,30 @@
 package dgf.main;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 
 
 public class GUISimulator extends  JFrame {
 
-//    private List<> = new ArrayList<>();
+    private ArrayList<Person> personList;
 
-    public GUISimulator(){
+    public GUISimulator(ArrayList<Person> list){
         super("Epidemic Transmission Simulation");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(800, 500);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(5, 5));
-
-
+        
+        
+        personList = list;
+        
 
         this.setVisible(true);
     } // end ctor
 
+
+    
+    
 } // end class
