@@ -66,7 +66,7 @@ public class Ball {
         while (loopFlag) {
             this.xIncrement = (int) (Math.random() * 10 - 5);
             this.yIncrement = (int) (Math.random() * 10 - 5);
-            if (this.xIncrement == 0 && this.xIncrement == 0) {
+            if (this.xIncrement == 0 && this.yIncrement == 0) {
                 //run it again
                 this.xIncrement = (int) (Math.random() * 10 - 5);
                 this.yIncrement = (int) (Math.random() * 10 - 5);
