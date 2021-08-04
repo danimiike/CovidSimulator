@@ -8,6 +8,7 @@
  */
 
 package dgf.main;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,12 +22,12 @@ import javax.swing.event.*;
 
 public class MainMenu extends JFrame {
 
-    private JSlider s1, s2, s3, s4, s5;
-    private JLabel L1, L2, L3, L4, L5;
-    private JLabel s1StatusLabel, s2StatusLabel, s3StatusLabel, s4StatusLabel, s5StatusLabel;
-    private JPanel panel1, panel2, panel2_0, panel2_1, panel3, panel4, panel5;
- //   private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
-    JButton B;
+    private JSlider sldrPopulation, sldrNotVaccinated, sldrOneShot, sldrTwoShot, sldrImmunity;
+    private JLabel lblPopulation, lblNotVaccinated, lblOneShot, lblTwoShot, lblImmunity;
+    private JLabel lblStatusPopulation, lblStatusNotVaccinated, lblStatusOneShot, lblStatusTwoShot, lblStatusImmunity;
+    private JPanel pnlTitle, pnlMain, pnlPopulation, pnlImmunityStatus, panel3, panel4, pnlBtnStartSimulation;
+    //   private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
+    JButton btnStartSimulation;
 
     Font font = new Font("Times New Roman", Font.PLAIN, 20);
     Font sliderFont = new Font("Times New Roman", Font.PLAIN, 8);
@@ -40,150 +41,126 @@ public class MainMenu extends JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(5, 5));
 
+
         JLabel welcomeLbl = new JLabel("Choose your simulation scenario:");
         welcomeLbl.setFont(font);
-        panel1 = new JPanel();
-        panel1.add(welcomeLbl);
+        this.pnlTitle = new JPanel();
+        this.pnlTitle.add(welcomeLbl);
+
+        // Initialize labels
+        this.lblPopulation = new JLabel("Size of the population");
+        this.lblNotVaccinated = new JLabel("People not Vaccinated");
+        this.lblOneShot = new JLabel("People with one shot");
+        this.lblTwoShot = new JLabel("People with two shots");
+        this.lblImmunity = new JLabel("People with natural immunity");
+        this.lblStatusPopulation = new JLabel("Choose a value: ", JLabel.CENTER);
+        this.lblStatusNotVaccinated = new JLabel("Choose a value: ", JLabel.CENTER);
+        this.lblStatusOneShot = new JLabel("Choose a value: ", JLabel.CENTER);
+        this.lblStatusTwoShot = new JLabel("Choose a value: ", JLabel.CENTER);
+        this.lblStatusImmunity = new JLabel("Choose a value: ", JLabel.CENTER);
 
 
-        L1 = new JLabel("Size of the population");
-        L2 = new JLabel("People no vaccinated");
-        L3 = new JLabel("People with one shot");
-        L4 = new JLabel("People with two shots");
-        L5 = new JLabel("People with natural immunity");
+        // initialize sliders
+        sldrPopulation = this.setSliderConfig(this.lblStatusPopulation, 5000, 100, 500);
+        sldrNotVaccinated = this.setSliderConfig(this.lblStatusNotVaccinated, 100, 5, 10);
+        sldrOneShot = this.setSliderConfig(this.lblStatusOneShot, 100, 5, 10);
+        sldrTwoShot = this.setSliderConfig(this.lblStatusTwoShot, 100, 5, 10);
+        sldrImmunity = this.setSliderConfig(this.lblStatusImmunity, 100, 5, 10);
 
 
-        s1StatusLabel = new JLabel("Choose a value", JLabel.CENTER);
-        s1 = new JSlider(SwingConstants.HORIZONTAL, 0, 5000, 0);
-        s1.setMinorTickSpacing(100);
-        s1.setMajorTickSpacing(500);
-        s1.setPaintLabels(true);
-        s1.setPaintTicks(true);
-        s1.setFont(sliderFont);
-        s1.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                s1StatusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
-            }
-        });
+        pnlPopulation = new JPanel();
+        pnlPopulation.setLayout(new GridLayout(1, 3));
+        pnlPopulation.add(this.lblPopulation);
+        pnlPopulation.add(this.sldrPopulation);
+        pnlPopulation.add(this.lblStatusPopulation);
 
-        s2StatusLabel = new JLabel("Choose a value", JLabel.CENTER);
-        s2 = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
-        s2.setMinorTickSpacing(5);
-        s2.setMajorTickSpacing(10);
-        s2.setPaintLabels(true);
-        s2.setPaintTicks(true);
-        s2.setFont(sliderFont);
-        s2.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                s2StatusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
-            }
-        });
+        pnlImmunityStatus = new JPanel(new GridLayout(4, 3));
+        pnlImmunityStatus.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
+        pnlImmunityStatus.add(this.lblNotVaccinated);
+        pnlImmunityStatus.add(this.sldrNotVaccinated);
+        pnlImmunityStatus.add(this.lblStatusNotVaccinated);
 
-        s3StatusLabel = new JLabel("Choose a value", JLabel.CENTER);
-        s3 = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
-        s3.setMinorTickSpacing(5);
-        s3.setMajorTickSpacing(10);
-        s3.setPaintLabels(true);
-        s3.setPaintTicks(true);
-        s3.setFont(sliderFont);
-        s3.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                s3StatusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
-            }
-        });
+        pnlImmunityStatus.add(this.lblOneShot);
+        pnlImmunityStatus.add(this.sldrOneShot);
+        pnlImmunityStatus.add(this.lblStatusOneShot);
 
-        s4StatusLabel = new JLabel("Choose a value", JLabel.CENTER);
-        s4 = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
-        s4.setMinorTickSpacing(5);
-        s4.setMajorTickSpacing(10);
-        s4.setPaintLabels(true);
-        s4.setPaintTicks(true);
-        s4.setFont(sliderFont);
-        s4.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                s4StatusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
-            }
-        });
+        pnlImmunityStatus.add(this.lblTwoShot);
+        pnlImmunityStatus.add(this.sldrTwoShot);
+        pnlImmunityStatus.add(this.lblStatusTwoShot);
 
-        s5StatusLabel = new JLabel("Choose a value", JLabel.CENTER);
-        s5 = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
-        s5.setMinorTickSpacing(5);
-        s5.setMajorTickSpacing(10);
-        s5.setPaintLabels(true);
-        s5.setPaintTicks(true);
-        s5.setFont(sliderFont);
-        s5.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                s5StatusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
-            }
-        });
-
-        panel2_0 = new JPanel();
-        panel2_0.setLayout(new GridLayout(1, 3));
-        panel2_0.add(L1);
-        panel2_0.add(s1);
-        panel2_0.add(s1StatusLabel);
-
-        panel2_1 = new JPanel(new GridLayout(4, 3));
-        panel2_1.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
-        panel2_1.add(L2);
-        panel2_1.add(s2);
-        panel2_1.add(s2StatusLabel);
-        panel2_1.add(L3);
-        panel2_1.add(s3);
-        panel2_1.add(s3StatusLabel);
-        panel2_1.add(L4);
-        panel2_1.add(s4);
-        panel2_1.add(s4StatusLabel);
-        panel2_1.add(L5);
-        panel2_1.add(s5);
-        panel2_1.add(s5StatusLabel);
+        pnlImmunityStatus.add(this.lblImmunity);
+        pnlImmunityStatus.add(this.sldrImmunity);
+        pnlImmunityStatus.add(this.lblStatusImmunity);
 
 
-        panel2 = new JPanel();
-        panel2.setLayout(new BorderLayout(0, 20));
-        panel2.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        panel2.add(panel2_0, BorderLayout.NORTH);
-        panel2.add(panel2_1, BorderLayout.CENTER);
+        pnlMain = new JPanel();
+        pnlMain.setLayout(new BorderLayout(0, 20));
+        pnlMain.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        pnlMain.add(this.pnlPopulation, BorderLayout.NORTH);
+        pnlMain.add(this.pnlImmunityStatus, BorderLayout.CENTER);
 
+        // TODO: Decide later if we going to continue with these two empty panel. Only aesthetics.
         panel3 = new JPanel();
         panel4 = new JPanel();
 
-        panel5 = new JPanel();
-        B = new JButton("Start Simulation");
-        B.setFont(font);
+        pnlBtnStartSimulation = new JPanel();
+        btnStartSimulation = new JButton("Start Simulation");
+        btnStartSimulation.setFont(font);
 
         ActionListener jbtListener = new MyJButtonListener();
-        B.addActionListener(jbtListener);
+        btnStartSimulation.addActionListener(jbtListener);
 
-        panel5.add(B);
+        pnlBtnStartSimulation.add(this.btnStartSimulation);
 
-        this.add(panel1, BorderLayout.NORTH);
-        this.add(panel2, BorderLayout.CENTER);
-        this.add(panel3, BorderLayout.WEST);
-        this.add(panel4, BorderLayout.EAST);
-        this.add(panel5, BorderLayout.SOUTH);
+        this.add(this.pnlTitle, BorderLayout.NORTH);
+        this.add(this.pnlMain, BorderLayout.CENTER);
+        this.add(this.panel3, BorderLayout.WEST);
+        this.add(this.panel4, BorderLayout.EAST);
+        this.add(this.pnlBtnStartSimulation, BorderLayout.SOUTH);
 
         this.setVisible(true);
     }//end constructor
 
     private class MyJButtonListener implements ActionListener {
-    	
-    	public void actionPerformed(ActionEvent e) {
-    	
-    		//boolean isclicked = true;
-    		JOptionPane.showInternalMessageDialog(contentPane, "Botao clicado");
-    		//CHAMA O GUI SIMULATOR\
-    		ArrayList<Person> arrayList = new ArrayList<>();
-    		arrayList.add(new Person(true,true,1,0,0,2,false,false));
-    		new GUISimulator(arrayList);
-    	}
+
+        public void actionPerformed(ActionEvent e) {
+            ArrayList<Person> arrayList = new ArrayList<>();
+
+            int pop = sldrPopulation.getValue();
+            // TODO: Check the total value for the count. their sum need to be equals
+            int countNotVaccinated = sldrNotVaccinated.getValue() * pop / 100;
+            int countOneShot = sldrOneShot.getValue() * pop / 100;
+            int countTwoShot = sldrTwoShot.getValue() * pop / 100;
+            int countImmunity = sldrImmunity.getValue() * pop / 100;
+
+//            System.out.println(pop);
+//            System.out.println(countNotVaccinated);
+//            System.out.println(countOneShot);
+//            System.out.println(countTwoShot);
+//            System.out.println(countImmunity);
+//            System.out.println(countNotVaccinated + countOneShot + countTwoShot + countImmunity);
+
+            new GUISimulator(arrayList);
+        }
+    }
+
+    private JSlider setSliderConfig(JLabel statusLabel, int max, int minorSpace, int majorSpace) {
+//        statusLabel = new JLabel("Choose a value: ", JLabel.CENTER);
+        JSlider slider = new JSlider(SwingConstants.HORIZONTAL, 0, max, 0);
+        slider.setMinorTickSpacing(minorSpace);
+        slider.setMajorTickSpacing(majorSpace);
+        slider.setPaintLabels(true);
+        slider.setPaintTicks(true);
+        slider.setFont(sliderFont);
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                statusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
+            }
+        });
+        return slider;
     }
 
     public static void main(String[] args) {
-
         new MainMenu();
     }//end main
-
-
-}
+} // end class

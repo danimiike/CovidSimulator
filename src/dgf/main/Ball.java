@@ -4,32 +4,79 @@ import java.awt.*;
 
 public class Ball {
 
-    // Paint mathod
-    //
+    private int xCoord;
+    private int yCoord;
+    private int diameter;
+    private Color color;
+    private int xIncrement;
+    private int yIncrement;
 
-    private int xCoord, yCoord, diameter;
-    //these represent the number of pixels that the object will �move� in each drawing cycle. The value of each can
-    //range from -5 to +5 pixels. At instantiation time these values should be randomly generated and assigned so that
-    //a particular dgf.main.Person object could be drawn anywhere on the drawing surface.. These values will also be modified if the object
-    //collides with another object so that the objects will probably change direction after the collision.
-
-    //flags for ball direction
-    private boolean xFlag; //if true, we move to the right by incrementing xCoord
-    //if false, we move left by decrementing xCoord.
-    private boolean yFlag; //if true, we move down by incrementing yCoord
-    //if false, we move up by decrementing yCoord
-
-    private Graphics graphics;
-
-    public Ball(int xCoord, int yCoord, int diameter, boolean xFlag, boolean yFlag) {
+    public Ball(int xCoord, int yCoord, int diameter, Color color) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
         this.diameter = diameter;
-        this.xFlag = xFlag;
-        this.yFlag = yFlag;
-    }
+        this.color = color;
 
-    // Getters and Setters
+        boolean loopFlag = true;
+        while (loopFlag) {
+            this.xIncrement = (int) (Math.random() * 10 - 5);
+            this.yIncrement = (int) (Math.random() * 10 - 5);
+            if (this.xIncrement == 0 && this.yIncrement == 0) {
+                //run it again
+                this.xIncrement = (int) (Math.random() * 10 - 5);
+                this.yIncrement = (int) (Math.random() * 10 - 5);
+            } else {
+                loopFlag = false;
+            } // end if-else block
+        }//end loop
+    } // end Ball ctor
+
+    public Ball(int diameter, Color color, int widthValue, int heightValue) {
+        this.diameter = diameter;
+        this.color = color;
+
+        int randomX, randomY;
+        boolean loopFlag = true;
+        while (loopFlag) {
+            //generate a random value using widthValue
+            randomX = (int) (Math.random() * widthValue);
+            if (randomX >= 0 && randomX <= widthValue - this.diameter) {
+                //we have a valid x value, assign it to xCoord
+                this.xCoord = randomX;
+                //System.out.println("STUB:Valid random xCoord value of " + randomX);
+                loopFlag = false;
+            }
+        }//end while
+
+        //reset flag1 to true to start second loop
+        loopFlag = true;
+        while (loopFlag) {
+            //repeat for yCoord
+            randomY = (int) (Math.random() * heightValue);
+            if (randomY >= 0 && randomY <= heightValue - this.diameter) {
+                //we have a valid y value, assign it to yCoord
+                this.yCoord = randomY;
+                //System.out.println("STUB:Valid random yCoord value of " + randomY);
+                loopFlag = false;
+            }
+        }//end while
+
+        //Added July 15 to get the values for the increments
+        loopFlag = true;
+        while (loopFlag) {
+            this.xIncrement = (int) (Math.random() * 10 - 5);
+            this.yIncrement = (int) (Math.random() * 10 - 5);
+            if (this.xIncrement == 0 && this.xIncrement == 0) {
+                //run it again
+                this.xIncrement = (int) (Math.random() * 10 - 5);
+                this.yIncrement = (int) (Math.random() * 10 - 5);
+            } else {
+                loopFlag = false;
+            }
+        }//end loop
+    } // end ctor
+
+
     public int getxCoord() {
         return xCoord;
     }
@@ -54,19 +101,27 @@ public class Ball {
         this.diameter = diameter;
     }
 
-    public boolean isxFlag() {
-        return xFlag;
+    public Color getColor() {
+        return color;
     }
 
-    public void setxFlag(boolean xFlag) {
-        this.xFlag = xFlag;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
-    public boolean isyFlag() {
-        return yFlag;
+    public int getxIncrement() {
+        return xIncrement;
     }
 
-    public void setyFlag(boolean yFlag) {
-        this.yFlag = yFlag;
+    public void setxIncrement(int xIncrement) {
+        this.xIncrement = xIncrement;
     }
-}
+
+    public int getyIncrement() {
+        return yIncrement;
+    }
+
+    public void setyIncrement(int yIncrement) {
+        this.yIncrement = yIncrement;
+    }
+} // end class

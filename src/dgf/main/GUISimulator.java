@@ -19,10 +19,13 @@ public class GUISimulator extends  JFrame {
         
         
         personList = list;
+
         
 
         this.setVisible(true);
     } // end ctor
+
+
 
 
     
