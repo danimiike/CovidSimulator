@@ -16,9 +16,7 @@ public class GUISimulator extends  JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(5, 5));
 
-//        for (Person p : collector) {
-//
-//        }
+
 
         this.setVisible(true);
     } // end ctor

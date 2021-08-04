@@ -16,7 +16,6 @@ public class Person {
     protected boolean isInfected;
     protected int immunityStatus;
     protected int xCoord, yCoord, diameter;
-    //ver se vamos colorir as pessoas aqui na classe ou no main
 
     //these represent the number of pixels that the object will �move� in each drawing cycle. The value of each can
     //range from -5 to +5 pixels. At instantiation time these values should be randomly generated and assigned so that
@@ -30,10 +29,13 @@ public class Person {
     //stage at a count as 150 cycles
     protected int cycleCounter;
 
-    public Person(boolean isAlive, boolean isInfected, int immunityStatus, int x, int y, int diam,boolean xF, boolean yF) {//user inputs
+    public Person(boolean isAlive, boolean isInfected, int immunityStatus, int x, int y, int diam, boolean xF, boolean yF) {//user inputs
         this.isAlive = isAlive;
         this.isInfected = isInfected;
         this.immunityStatus = immunityStatus;
+
+
+
         this.xCoord = x;
         this.yCoord = y;
         this.diameter = diam;
@@ -51,11 +53,17 @@ public class Person {
         return yCoord;
     }
 
-    public int getDiameter() { return diameter;}
+    public int getDiameter() {
+        return diameter;
+    }
 
-    public boolean isxFlag() { return xFlag;}
+    public boolean isxFlag() {
+        return xFlag;
+    }
 
-    public boolean isyFlag() { return yFlag;}
+    public boolean isyFlag() {
+        return yFlag;
+    }
 
     public int getCycleCounter() {
         return cycleCounter;
@@ -69,7 +77,9 @@ public class Person {
         return isInfected;
     }
 
-    public int getImmunityStatus() { return immunityStatus; }
+    public int getImmunityStatus() {
+        return immunityStatus;
+    }
 
 
     public void setxCoord(int xCoord) {

@@ -1,4 +1,4 @@
-package dgf.main; /**
+/**
  * Program Name:        dgf.main.MainMenu.java
  * Purpose:	            this is a class to create a Gui component to receive user inputs
  * Coder:	            Danielle Menezes de Mello Miike
@@ -7,6 +7,7 @@ package dgf.main; /**
  * Date:                Jul 31, 2021
  */
 
+package dgf.main;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +19,8 @@ import javax.swing.event.*;
 
 
 public class MainMenu extends JFrame {
+    private GUISimulator guiSimulator;
+
     private JSlider s1, s2, s3, s4, s5;
     private JLabel L1, L2, L3, L4, L5;
     private JLabel s1StatusLabel, s2StatusLabel, s3StatusLabel, s4StatusLabel, s5StatusLabel;
@@ -179,6 +182,9 @@ public class MainMenu extends JFrame {
             //	{	ver como iremos tratar isso, se for menor que 100 vamos assumir que o resto nao esta vacinado, por exemplo?
             if (popNoShot + popOneShot + popTwoShot + popNatImmunity > 100) {
                 JOptionPane.showInternalMessageDialog(contentPane, "The sum of levels of immunity should be 100 or less.");
+            }
+            else {
+                guiSimulator = new GUISimulator();
             }
 
 
