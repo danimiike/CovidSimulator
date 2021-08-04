@@ -15,13 +15,8 @@ public class Person {
     protected boolean isAlive;
     protected boolean isInfected;
     protected int immunityStatus;
-    protected int xCoord, yCoord, diameter;
 
-    //these represent the number of pixels that the object will �move� in each drawing cycle. The value of each can
-    //range from -5 to +5 pixels. At instantiation time these values should be randomly generated and assigned so that
-    //a particular dgf.main.Person object could be drawn anywhere on the drawing surface.. These values will also be modified if the object
-    //collides with another object so that the objects will probably change direction after the collision.
-    boolean xFlag, yFlag;
+    protected Ball ball;
 
     //this is used to determine how long an infected object remains infections. It starts at zero and only starts
     //incrementing when the object�s infected status changes to true. One of the assumptions we�ll use in our model is
@@ -29,42 +24,15 @@ public class Person {
     //stage at a count as 150 cycles
     protected int cycleCounter;
 
-    public Person(boolean isAlive, boolean isInfected, int immunityStatus, int x, int y, int diam, boolean xF, boolean yF) {//user inputs
+    public Person(boolean isAlive, boolean isInfected, int immunityStatus, Ball ball) {//user inputs
         this.isAlive = isAlive;
         this.isInfected = isInfected;
         this.immunityStatus = immunityStatus;
 
-
-
-        this.xCoord = x;
-        this.yCoord = y;
-        this.diameter = diam;
-        this.xFlag = xF;
-        this.yFlag = yF;
+        this.ball = ball;
     } //end constructor
 
     //getters and setters
-
-    public int getxCoord() {
-        return xCoord;
-    }
-
-    public int getyCoord() {
-        return yCoord;
-    }
-
-    public int getDiameter() {
-        return diameter;
-    }
-
-    public boolean isxFlag() {
-        return xFlag;
-    }
-
-    public boolean isyFlag() {
-        return yFlag;
-    }
-
     public int getCycleCounter() {
         return cycleCounter;
     }
@@ -79,23 +47,6 @@ public class Person {
 
     public int getImmunityStatus() {
         return immunityStatus;
-    }
-
-
-    public void setxCoord(int xCoord) {
-        this.xCoord = xCoord;
-    }
-
-    public void setyCoord(int yCoord) {
-        this.yCoord = yCoord;
-    }
-
-    public void setyFlag(boolean yFlag) {
-        this.yFlag = yFlag;
-    }
-
-    public void setxFlag(boolean xFlag) {
-        this.xFlag = xFlag;
     }
 
     public void setCycleCounter(int cycleCounter) {
