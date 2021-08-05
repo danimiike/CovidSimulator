@@ -23,33 +23,41 @@ import javax.swing.event.*;
 public class MainMenu extends JFrame {
 
     private JSlider sldrPopulation, sldrNotVaccinated, sldrOneShot, sldrTwoShot, sldrImmunity;
+    private JLabel lblMainTitle;
     private JLabel lblPopulation, lblNotVaccinated, lblOneShot, lblTwoShot, lblImmunity;
     private JLabel lblStatusPopulation, lblStatusNotVaccinated, lblStatusOneShot, lblStatusTwoShot, lblStatusImmunity;
-    private JPanel pnlTitle, pnlMain, pnlPopulation, pnlImmunityStatus, panel3, panel4, pnlBtnStartSimulation;
+    private JPanel pnlTitle, pnlMain, pnlPopulation, pnlImmunityStatus, pnlBtnStartSimulation;
     //   private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
     JButton btnStartSimulation;
     Font font = new Font("Times New Roman", Font.PLAIN, 20);
     Font sliderFont = new Font("Times New Roman", Font.PLAIN, 8);
-    Container contentPane;
 
-    private final int WINDOW_WIDTH = 800;
-    private final int WINDOW_HEIGHT = 500;
+    private final int WINDOW_WIDTH_MAIN = 800;
+    private final int WINDOW_HEIGHT_MAIN = 500;
     private final int IMG_DIAMETER = 10;
 
     public MainMenu() {
         super("Covid-19 Simulation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        this.setSize(WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(5, 5));
 
 
-        JLabel welcomeLbl = new JLabel("Choose your simulation scenario:");
-        welcomeLbl.setFont(font);
+        // Initialize the panels
         this.pnlTitle = new JPanel();
-        this.pnlTitle.add(welcomeLbl);
+        this.pnlPopulation = new JPanel();
+        this.pnlPopulation.setLayout(new GridLayout(1, 3));
+        this.pnlImmunityStatus = new JPanel(new GridLayout(4, 3));
+        this.pnlImmunityStatus.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
+        this.pnlMain = new JPanel();
+        this.pnlMain.setLayout(new BorderLayout(0, 20));
+        this.pnlMain.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        this.pnlBtnStartSimulation = new JPanel();
 
         // Initialize labels
+        this.lblMainTitle = new JLabel("Choose your simulation scenario:");
+        this.lblMainTitle.setFont(font);
         this.lblPopulation = new JLabel("Size of the population");
         this.lblNotVaccinated = new JLabel("People not Vaccinated");
         this.lblOneShot = new JLabel("People with one shot");
@@ -69,62 +77,49 @@ public class MainMenu extends JFrame {
         this.sldrTwoShot = this.setSliderConfig(this.lblStatusTwoShot, 100, 5, 10);
         this.sldrImmunity = this.setSliderConfig(this.lblStatusImmunity, 100, 5, 10);
 
+        // Initialize buttons
+        this.btnStartSimulation = new JButton("Start Simulation");
+        this.btnStartSimulation.setFont(font);
+        this.btnStartSimulation.addActionListener(new OptionListener());
 
-        this.pnlPopulation = new JPanel();
-        this.pnlPopulation.setLayout(new GridLayout(1, 3));
+        // Populate the panels
+        this.pnlTitle.add(this.lblMainTitle);
         this.pnlPopulation.add(this.lblPopulation);
         this.pnlPopulation.add(this.sldrPopulation);
         this.pnlPopulation.add(this.lblStatusPopulation);
 
-        this.pnlImmunityStatus = new JPanel(new GridLayout(4, 3));
-        this.pnlImmunityStatus.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
+        // immunity status panel
+        // not vaccinated slider
         this.pnlImmunityStatus.add(this.lblNotVaccinated);
         this.pnlImmunityStatus.add(this.sldrNotVaccinated);
         this.pnlImmunityStatus.add(this.lblStatusNotVaccinated);
-
+        // one shot slider
         this.pnlImmunityStatus.add(this.lblOneShot);
         this.pnlImmunityStatus.add(this.sldrOneShot);
         this.pnlImmunityStatus.add(this.lblStatusOneShot);
-
+        // two shot slider
         this.pnlImmunityStatus.add(this.lblTwoShot);
         this.pnlImmunityStatus.add(this.sldrTwoShot);
         this.pnlImmunityStatus.add(this.lblStatusTwoShot);
-
+        // natural immunity slider
         this.pnlImmunityStatus.add(this.lblImmunity);
         this.pnlImmunityStatus.add(this.sldrImmunity);
         this.pnlImmunityStatus.add(this.lblStatusImmunity);
-
-
-        this.pnlMain = new JPanel();
-        this.pnlMain.setLayout(new BorderLayout(0, 20));
-        this.pnlMain.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        // main panel (will contain the population and the immunity status panels)
         this.pnlMain.add(this.pnlPopulation, BorderLayout.NORTH);
         this.pnlMain.add(this.pnlImmunityStatus, BorderLayout.CENTER);
-
-        // TODO: Decide later if we going to continue with these two empty panel. Only aesthetics.
-        this.panel3 = new JPanel();
-        this.panel4 = new JPanel();
-
-        this.pnlBtnStartSimulation = new JPanel();
-        this.btnStartSimulation = new JButton("Start Simulation");
-        this.btnStartSimulation.setFont(font);
-
-        ActionListener jbtListener = new MyJButtonListener();
-        this.btnStartSimulation.addActionListener(jbtListener);
-
+        // button panel
         this.pnlBtnStartSimulation.add(this.btnStartSimulation);
 
         this.add(this.pnlTitle, BorderLayout.NORTH);
         this.add(this.pnlMain, BorderLayout.CENTER);
-        this.add(this.panel3, BorderLayout.WEST);
-        this.add(this.panel4, BorderLayout.EAST);
         this.add(this.pnlBtnStartSimulation, BorderLayout.SOUTH);
 
         this.setVisible(true);
     }//end constructor
 
-    private class MyJButtonListener implements ActionListener {
-
+    private class OptionListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             ArrayList<Person> personList = new ArrayList<>();
 
@@ -136,44 +131,51 @@ public class MainMenu extends JFrame {
             int popTwoShot = sldrTwoShot.getValue() * pop / 100;
             int popImmunity = sldrImmunity.getValue() * pop / 100;
 
-            Person infected = new Person(true, true, ImmunityStatus.Status.NO_SHOT,
-                    new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH, WINDOW_HEIGHT));
+            Person infected = new Person(true, true, ImmunityStatus.Status.NO_IMMUNITY,
+                    new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN));
             personList.add(infected);
+
             for (int i = 0; i < pop; i++) {
                 if (popNotVaccinated-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH, WINDOW_HEIGHT);
-                    Person person = new Person(true, false, ImmunityStatus.Status.NO_SHOT, ballPerson);
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN);
+                    Person person = new Person(true, false, ImmunityStatus.Status.NO_IMMUNITY, ballPerson);
                     personList.add(person);
                 } else if (popOneShot-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.CYAN, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.CYAN, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN);
                     Person person = new Person(true, false, ImmunityStatus.Status.ONE_SHOT, ballPerson);
                     personList.add(person);
                 } else if (popTwoShot-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.YELLOW, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.YELLOW, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN);
                     Person person = new Person(true, false, ImmunityStatus.Status.ONE_SHOT, ballPerson);
                     personList.add(person);
                 } else if (popImmunity-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.GREEN, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.GREEN, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN);
                     Person person = new Person(true, false, ImmunityStatus.Status.ONE_SHOT, ballPerson);
                     personList.add(person);
                 } else if (countPop-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH, WINDOW_HEIGHT);
-                    Person person = new Person(true, false, ImmunityStatus.Status.NO_SHOT, ballPerson);
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN);
+                    Person person = new Person(true, false, ImmunityStatus.Status.NO_IMMUNITY, ballPerson);
                     personList.add(person);
                 } // end
                 countPop--;
             } // end for loop
 
-//            System.out.println(pop);
-//            System.out.println(popNotVaccinated);
-//            System.out.println(countOneShot);
-//            System.out.println(countTwoShot);
-//            System.out.println(countImmunity);
-//            System.out.println(popNotVaccinated + countOneShot + countTwoShot + countImmunity);
+            callSimulator(personList);
+        } // end actionPerformed
+    } // end inner listener class
 
+    private void callSimulator(ArrayList<Person> arr) {
+        this.pnlTitle.setVisible(false);
+        this.pnlPopulation.setVisible(false);
+        this.pnlImmunityStatus.setVisible(false);
+        this.pnlMain.setVisible(false);
+        this.pnlBtnStartSimulation.setVisible(false);
 
-            GUIRunner objRunenr = new GUIRunner(new GUISimulator(personList));
-        }
+        this.getContentPane().setBackground(Color.BLUE);
+        this.setSize(WINDOW_WIDTH_MAIN + 100, WINDOW_HEIGHT_MAIN + 100);
+
+        this.getContentPane().add(new Simulator(arr), BorderLayout.CENTER);
+//        this.pack();
     }
 
     private JSlider setSliderConfig(JLabel statusLabel, int max, int minorSpace, int majorSpace) {
@@ -192,8 +194,154 @@ public class MainMenu extends JFrame {
         return slider;
     }
 
+
+    private class Simulator extends JPanel {
+        private ArrayList<Person> personList;
+        private final int LAG_TIME = 200; // time in milliseconds between re-paints of screen
+        private Timer time; //Timer class object that will fire events every LAG_TIME interval
+        private final int WINDOW_WIDTH = 600;
+        private final int WINDOW_HEIGHT = 400;
+        private final int IMG_DIAMETER = 10; //size of ball to be drawn
+
+        public Simulator(ArrayList<Person> arr) {
+
+            this.time = new Timer(LAG_TIME, new BounceListener());
+
+            this.personList = arr;
+
+            this.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+            this.setBackground(Color.LIGHT_GRAY);
+
+            this.time.start();
+        } // end ctor
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.setColor(Color.PINK);
+            for (Person person : personList) {
+                g.setColor(person.getBall().getColor());
+                g.fillOval(person.getBall().getxCoord(), person.getBall().getyCoord(), person.getBall().getDiameter(), person.getBall().getDiameter());
+            } // end for loop
+        } // end paintComponent override method
+
+        private class BounceListener implements ActionListener {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (Person person : personList)
+                    calcPosition(person.getBall());
+
+                checkCollision();
+                //call repaint(), which in turn calls paintComponent()
+                repaint();
+            } // end actionPerformed override method
+        } // enn inner listener class
+
+        private void checkCollision(){
+            int deltaX;
+            int deltaY;
+            int firstBallX, firstBallY;
+            int secondBallX, secondBallY;
+
+            for (int i = 0; i < personList.size() - 1; i++) {
+                firstBallX = personList.get(i).getBall().getxCoord();
+                firstBallY = personList.get(i).getBall().getyCoord();
+
+                for (int j = i + 1; j < personList.size(); j++) {
+                    secondBallX = personList.get(j).getBall().getxCoord();
+                    secondBallY = personList.get(j).getBall().getyCoord();
+
+                    //now calculate deltaX and deltaY for the pair of balls
+                    deltaX = firstBallX - secondBallX;
+                    deltaY = firstBallY - secondBallY;
+                    if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= IMG_DIAMETER)//if true, they have touched
+                    {
+                        personList.get(i).getBall().setxIncrement(personList.get(i).getBall().getxIncrement() * -1);
+                        personList.get(i).getBall().setyIncrement(personList.get(i).getBall().getyIncrement() * -1);
+                        personList.get(j).getBall().setxIncrement(personList.get(j).getBall().getxIncrement() * -1);
+                        personList.get(j).getBall().setyIncrement(personList.get(j).getBall().getyIncrement() * -1);
+
+                        int firstBallNewxIncrement = (int) (Math.random() * 11 - 5);
+                        int firstBallNewyIncrement = (int) (Math.random() * 11 - 5);
+                        int secondBallNewxIncrement = (int) (Math.random() * 11 - 5);
+                        int secondBallNewyIncrement = (int) (Math.random() * 11 - 5);
+
+                        personList.get(i).getBall().setxIncrement(firstBallNewxIncrement);
+                        personList.get(i).getBall().setyIncrement(firstBallNewyIncrement);
+                        personList.get(j).getBall().setxIncrement(secondBallNewxIncrement);
+                        personList.get(j).getBall().setyIncrement(secondBallNewyIncrement);
+
+
+                        if (personList.get(i).getIsInfected() && !personList.get(j).getIsInfected())
+                            changeColor(i,j);
+                        if (personList.get(j).getIsInfected() && !personList.get(i).getIsInfected())
+                            changeColor(j,i);
+                    }//end if
+                }//end inner for
+            }//end outer loop
+        }
+
+        // Vamos fazer um break?
+        // Vou fazer pao
+        // Ja dei push no git
+
+
+
+        private void changeColor(int infected_idx, int uninfected_idx){
+            double probability = Math.random() * 101;
+            switch (personList.get(uninfected_idx).getImmunityStatus()) {
+                case IMMUNE:
+                case TWO_SHOT:
+                    if(probability > 90){
+                        personList.get(uninfected_idx).getBall().setColor(personList.get(infected_idx).getBall().getColor());
+                        personList.get(uninfected_idx).setIsInfected(true);
+                    }
+                    break;
+                case ONE_SHOT:
+                    if(probability > 60){
+                        personList.get(uninfected_idx).getBall().setColor(personList.get(infected_idx).getBall().getColor());
+                        personList.get(uninfected_idx).setIsInfected(true);
+                    }
+                    break;
+                default:
+                    if(probability > 20){
+                        personList.get(uninfected_idx).getBall().setColor(personList.get(infected_idx).getBall().getColor());
+                        personList.get(uninfected_idx).setIsInfected(true);
+                    }
+                    break;
+            } // end switch
+        } // end changeColor method
+
+        public void calcPosition(Ball ball) {
+
+            //check if near boundary. If so, then apply negative operator to the relevant increment
+            //Changed the operators to >= and <= from == to fix the "disappearing ball" problem
+            if (ball.getxCoord() >= WINDOW_WIDTH - ball.getDiameter()) {
+                //we are at right side, so change xIncrement to a negative
+                ball.setxIncrement(ball.getxIncrement() * -1);
+            }
+            if (ball.getxCoord() <= 0)//changed operator to <=
+            {
+                //if true, we're at left edge, flip the flag
+                ball.setxIncrement(ball.getxIncrement() * -1);
+                ;
+            }
+            if (ball.getyCoord() >= WINDOW_HEIGHT - ball.getDiameter()) {
+                ball.setyIncrement(ball.getyIncrement() * -1);
+            }
+            if (ball.getyCoord() <= 0) {
+                //if true, we're at left edge, flip the flag
+                ball.setyIncrement(ball.getyIncrement() * -1);
+                ;
+            }
+            //adjust the ball positions using the getters and setters
+            ball.setxCoord(ball.getxCoord() + ball.getxIncrement());
+            ball.setyCoord(ball.getyCoord() + ball.getyIncrement());
+        } // end calcPosition method
+    } // end inner class GuiSimulator
+
     public static void main(String[] args) {
         new MainMenu();
-
     }//end main
 } // end class
