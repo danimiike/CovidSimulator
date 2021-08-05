@@ -128,7 +128,7 @@ public class MainMenu extends JFrame {
 
             int pop = sldrPopulation.getValue();
             // TODO: Check the total value for the count. their sum need to be equals
-            int countNotVaccinated = sldrNotVaccinated.getValue() * pop / 100;
+            int countNotVaccinated =sldrNotVaccinated.getValue() * pop / 100;
             int countOneShot = sldrOneShot.getValue() * pop / 100;
             int countTwoShot = sldrTwoShot.getValue() * pop / 100;
             int countImmunity = sldrImmunity.getValue() * pop / 100;
@@ -140,7 +140,20 @@ public class MainMenu extends JFrame {
 //            System.out.println(countImmunity);
 //            System.out.println(countNotVaccinated + countOneShot + countTwoShot + countImmunity);
 
+            Person one = new Person(true, true, 10, new Ball(10, Color.RED,800,500));
+            Person two = new Person(true, true, 10, new Ball(10, Color.BLUE,800,500));
+            arrayList.add(one);
+            arrayList.add(two);
+            
+//            JFrame frame = new JFrame("Epidemic Transmission Simulation");
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    		frame.setLayout(new FlowLayout() );//ANONYMOUS object
+//    		frame.setSize(800,500);
+//    		frame.setLocationRelativeTo(null);
+//    		frame.getContentPane().setBackground(Color.lightGray);
+//            
             new GUISimulator(arrayList);
+//            frame.setVisible(true);	
         }
     }
 
@@ -162,5 +175,6 @@ public class MainMenu extends JFrame {
 
     public static void main(String[] args) {
         new MainMenu();
+        
     }//end main
 } // end class

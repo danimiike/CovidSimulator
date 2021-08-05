@@ -48,7 +48,9 @@ public class Person {
     public int getImmunityStatus() {
         return immunityStatus;
     }
-
+    public Ball getBall() {
+        return ball;
+    }
     public void setCycleCounter(int cycleCounter) {
         this.cycleCounter = cycleCounter;
     }
@@ -63,6 +65,10 @@ public class Person {
 
     public void setImmunityStatus(int immunityStatus) {
         this.immunityStatus = immunityStatus;
+    }
+    
+    public void setBallProperties(Ball newBall) {
+        this.ball = newBall;
     }
 
 
