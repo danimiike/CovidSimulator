@@ -28,16 +28,18 @@ public class MainMenu extends JFrame {
     private JPanel pnlTitle, pnlMain, pnlPopulation, pnlImmunityStatus, panel3, panel4, pnlBtnStartSimulation;
     //   private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
     JButton btnStartSimulation;
-
     Font font = new Font("Times New Roman", Font.PLAIN, 20);
     Font sliderFont = new Font("Times New Roman", Font.PLAIN, 8);
-
     Container contentPane;
+
+    private final int WINDOW_WIDTH = 800;
+    private final int WINDOW_HEIGHT = 500;
+    private final int IMG_DIAMETER = 10;
 
     public MainMenu() {
         super("Covid-19 Simulation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(800, 500);
+        this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(5, 5));
 
@@ -61,56 +63,56 @@ public class MainMenu extends JFrame {
 
 
         // initialize sliders
-        sldrPopulation = this.setSliderConfig(this.lblStatusPopulation, 5000, 100, 500);
-        sldrNotVaccinated = this.setSliderConfig(this.lblStatusNotVaccinated, 100, 5, 10);
-        sldrOneShot = this.setSliderConfig(this.lblStatusOneShot, 100, 5, 10);
-        sldrTwoShot = this.setSliderConfig(this.lblStatusTwoShot, 100, 5, 10);
-        sldrImmunity = this.setSliderConfig(this.lblStatusImmunity, 100, 5, 10);
+        this.sldrPopulation = this.setSliderConfig(this.lblStatusPopulation, 5000, 100, 500);
+        this.sldrNotVaccinated = this.setSliderConfig(this.lblStatusNotVaccinated, 100, 5, 10);
+        this.sldrOneShot = this.setSliderConfig(this.lblStatusOneShot, 100, 5, 10);
+        this.sldrTwoShot = this.setSliderConfig(this.lblStatusTwoShot, 100, 5, 10);
+        this.sldrImmunity = this.setSliderConfig(this.lblStatusImmunity, 100, 5, 10);
 
 
-        pnlPopulation = new JPanel();
-        pnlPopulation.setLayout(new GridLayout(1, 3));
-        pnlPopulation.add(this.lblPopulation);
-        pnlPopulation.add(this.sldrPopulation);
-        pnlPopulation.add(this.lblStatusPopulation);
+        this.pnlPopulation = new JPanel();
+        this.pnlPopulation.setLayout(new GridLayout(1, 3));
+        this.pnlPopulation.add(this.lblPopulation);
+        this.pnlPopulation.add(this.sldrPopulation);
+        this.pnlPopulation.add(this.lblStatusPopulation);
 
-        pnlImmunityStatus = new JPanel(new GridLayout(4, 3));
-        pnlImmunityStatus.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
-        pnlImmunityStatus.add(this.lblNotVaccinated);
-        pnlImmunityStatus.add(this.sldrNotVaccinated);
-        pnlImmunityStatus.add(this.lblStatusNotVaccinated);
+        this.pnlImmunityStatus = new JPanel(new GridLayout(4, 3));
+        this.pnlImmunityStatus.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
+        this.pnlImmunityStatus.add(this.lblNotVaccinated);
+        this.pnlImmunityStatus.add(this.sldrNotVaccinated);
+        this.pnlImmunityStatus.add(this.lblStatusNotVaccinated);
 
-        pnlImmunityStatus.add(this.lblOneShot);
-        pnlImmunityStatus.add(this.sldrOneShot);
-        pnlImmunityStatus.add(this.lblStatusOneShot);
+        this.pnlImmunityStatus.add(this.lblOneShot);
+        this.pnlImmunityStatus.add(this.sldrOneShot);
+        this.pnlImmunityStatus.add(this.lblStatusOneShot);
 
-        pnlImmunityStatus.add(this.lblTwoShot);
-        pnlImmunityStatus.add(this.sldrTwoShot);
-        pnlImmunityStatus.add(this.lblStatusTwoShot);
+        this.pnlImmunityStatus.add(this.lblTwoShot);
+        this.pnlImmunityStatus.add(this.sldrTwoShot);
+        this.pnlImmunityStatus.add(this.lblStatusTwoShot);
 
-        pnlImmunityStatus.add(this.lblImmunity);
-        pnlImmunityStatus.add(this.sldrImmunity);
-        pnlImmunityStatus.add(this.lblStatusImmunity);
+        this.pnlImmunityStatus.add(this.lblImmunity);
+        this.pnlImmunityStatus.add(this.sldrImmunity);
+        this.pnlImmunityStatus.add(this.lblStatusImmunity);
 
 
-        pnlMain = new JPanel();
-        pnlMain.setLayout(new BorderLayout(0, 20));
-        pnlMain.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        pnlMain.add(this.pnlPopulation, BorderLayout.NORTH);
-        pnlMain.add(this.pnlImmunityStatus, BorderLayout.CENTER);
+        this.pnlMain = new JPanel();
+        this.pnlMain.setLayout(new BorderLayout(0, 20));
+        this.pnlMain.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        this.pnlMain.add(this.pnlPopulation, BorderLayout.NORTH);
+        this.pnlMain.add(this.pnlImmunityStatus, BorderLayout.CENTER);
 
         // TODO: Decide later if we going to continue with these two empty panel. Only aesthetics.
-        panel3 = new JPanel();
-        panel4 = new JPanel();
+        this.panel3 = new JPanel();
+        this.panel4 = new JPanel();
 
-        pnlBtnStartSimulation = new JPanel();
-        btnStartSimulation = new JButton("Start Simulation");
-        btnStartSimulation.setFont(font);
+        this.pnlBtnStartSimulation = new JPanel();
+        this.btnStartSimulation = new JButton("Start Simulation");
+        this.btnStartSimulation.setFont(font);
 
         ActionListener jbtListener = new MyJButtonListener();
-        btnStartSimulation.addActionListener(jbtListener);
+        this.btnStartSimulation.addActionListener(jbtListener);
 
-        pnlBtnStartSimulation.add(this.btnStartSimulation);
+        this.pnlBtnStartSimulation.add(this.btnStartSimulation);
 
         this.add(this.pnlTitle, BorderLayout.NORTH);
         this.add(this.pnlMain, BorderLayout.CENTER);
@@ -124,36 +126,53 @@ public class MainMenu extends JFrame {
     private class MyJButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            ArrayList<Person> arrayList = new ArrayList<>();
+            ArrayList<Person> personList = new ArrayList<>();
 
             int pop = sldrPopulation.getValue();
+            int countPop = pop;
             // TODO: Check the total value for the count. their sum need to be equals
-            int countNotVaccinated =sldrNotVaccinated.getValue() * pop / 100;
-            int countOneShot = sldrOneShot.getValue() * pop / 100;
-            int countTwoShot = sldrTwoShot.getValue() * pop / 100;
-            int countImmunity = sldrImmunity.getValue() * pop / 100;
+            int popNotVaccinated = sldrNotVaccinated.getValue() * pop / 100;
+            int popOneShot = sldrOneShot.getValue() * pop / 100;
+            int popTwoShot = sldrTwoShot.getValue() * pop / 100;
+            int popImmunity = sldrImmunity.getValue() * pop / 100;
+
+            Person infected = new Person(true, true, ImmunityStatus.Status.NO_SHOT,
+                    new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH, WINDOW_HEIGHT));
+            personList.add(infected);
+            for (int i = 0; i < pop; i++) {
+                if (popNotVaccinated-- > 0) {
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Person person = new Person(true, false, ImmunityStatus.Status.NO_SHOT, ballPerson);
+                    personList.add(person);
+                } else if (popOneShot-- > 0) {
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.CYAN, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Person person = new Person(true, false, ImmunityStatus.Status.ONE_SHOT, ballPerson);
+                    personList.add(person);
+                } else if (popTwoShot-- > 0) {
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.YELLOW, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Person person = new Person(true, false, ImmunityStatus.Status.ONE_SHOT, ballPerson);
+                    personList.add(person);
+                } else if (popImmunity-- > 0) {
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.GREEN, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Person person = new Person(true, false, ImmunityStatus.Status.ONE_SHOT, ballPerson);
+                    personList.add(person);
+                } else if (countPop-- > 0) {
+                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    Person person = new Person(true, false, ImmunityStatus.Status.NO_SHOT, ballPerson);
+                    personList.add(person);
+                } // end
+                countPop--;
+            } // end for loop
 
 //            System.out.println(pop);
-//            System.out.println(countNotVaccinated);
+//            System.out.println(popNotVaccinated);
 //            System.out.println(countOneShot);
 //            System.out.println(countTwoShot);
 //            System.out.println(countImmunity);
-//            System.out.println(countNotVaccinated + countOneShot + countTwoShot + countImmunity);
+//            System.out.println(popNotVaccinated + countOneShot + countTwoShot + countImmunity);
 
-            Person one = new Person(true, true, 10, new Ball(10, Color.RED,800,500));
-            Person two = new Person(true, true, 10, new Ball(10, Color.BLUE,800,500));
-            arrayList.add(one);
-            arrayList.add(two);
-            
-//            JFrame frame = new JFrame("Epidemic Transmission Simulation");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//    		frame.setLayout(new FlowLayout() );//ANONYMOUS object
-//    		frame.setSize(800,500);
-//    		frame.setLocationRelativeTo(null);
-//    		frame.getContentPane().setBackground(Color.lightGray);
-//            
-            new GUISimulator(arrayList);
-//            frame.setVisible(true);	
+
+            GUIRunner objRunenr = new GUIRunner(new GUISimulator(personList));
         }
     }
 
@@ -175,6 +194,6 @@ public class MainMenu extends JFrame {
 
     public static void main(String[] args) {
         new MainMenu();
-        
+
     }//end main
 } // end class

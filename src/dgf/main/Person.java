@@ -14,7 +14,7 @@ public class Person {
 
     protected boolean isAlive;
     protected boolean isInfected;
-    protected int immunityStatus;
+    protected ImmunityStatus.Status immunityStatus;
 
     protected Ball ball;
 
@@ -24,7 +24,7 @@ public class Person {
     //stage at a count as 150 cycles
     protected int cycleCounter;
 
-    public Person(boolean isAlive, boolean isInfected, int immunityStatus, Ball ball) {//user inputs
+    public Person(boolean isAlive, boolean isInfected, ImmunityStatus.Status immunityStatus, Ball ball) {//user inputs
         this.isAlive = isAlive;
         this.isInfected = isInfected;
         this.immunityStatus = immunityStatus;
@@ -45,7 +45,7 @@ public class Person {
         return isInfected;
     }
 
-    public int getImmunityStatus() {
+    public ImmunityStatus.Status getImmunityStatus() {
         return immunityStatus;
     }
     public Ball getBall() {
@@ -63,7 +63,7 @@ public class Person {
         this.isInfected = isInfected;
     }
 
-    public void setImmunityStatus(int immunityStatus) {
+    public void setImmunityStatus(ImmunityStatus.Status immunityStatus) {
         this.immunityStatus = immunityStatus;
     }
     
