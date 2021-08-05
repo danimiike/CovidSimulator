@@ -12,23 +12,19 @@ package dgf.main;
 
 public class Person {
 
-    protected boolean isAlive;
-    protected boolean isInfected;
-    protected ImmunityStatus.Status immunityStatus;
+    private boolean isAlive;
+    private boolean isInfected;
+    private ImmunityStatus.Status immunityStatus;
 
-    protected Ball ball;
+    private Ball ball;
 
-    //this is used to determine how long an infected object remains infections. It starts at zero and only starts
-    //incrementing when the object�s infected status changes to true. One of the assumptions we�ll use in our model is
-    //that an infected person will be infectious for a maximum of 7 days, so we�ll arbitrarily set the end of the infectious
-    //stage at a count as 150 cycles
-    protected int cycleCounter;
+    private int cycleCounter;
 
     public Person(boolean isAlive, boolean isInfected, ImmunityStatus.Status immunityStatus, Ball ball) {//user inputs
         this.isAlive = isAlive;
         this.isInfected = isInfected;
         this.immunityStatus = immunityStatus;
-
+        this.cycleCounter = 0;
         this.ball = ball;
     } //end constructor
 

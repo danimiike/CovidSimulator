@@ -64,12 +64,12 @@ public class Ball {
         //Added July 15 to get the values for the increments
         loopFlag = true;
         while (loopFlag) {
-            this.xIncrement = (int) (Math.random() * 10 - 5);
-            this.yIncrement = (int) (Math.random() * 10 - 5);
+            this.xIncrement = (int) (Math.random() * 11 - 5);
+            this.yIncrement = (int) (Math.random() * 11 - 5);
             if (this.xIncrement == 0 && this.yIncrement == 0) {
                 //run it again
-                this.xIncrement = (int) (Math.random() * 10 - 5);
-                this.yIncrement = (int) (Math.random() * 10 - 5);
+                this.xIncrement = (int) (Math.random() * 11 - 5);
+                this.yIncrement = (int) (Math.random() * 11 - 5);
             } else {
                 loopFlag = false;
             }

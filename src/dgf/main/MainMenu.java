@@ -19,9 +19,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 
-
 public class MainMenu extends JFrame {
 
+    // TODO: Add more attributes for the simulator panel. These will track all the number of infected person
     private JSlider sldrPopulation, sldrNotVaccinated, sldrOneShot, sldrTwoShot, sldrImmunity;
     private JLabel lblMainTitle;
     private JLabel lblPopulation, lblNotVaccinated, lblOneShot, lblTwoShot, lblImmunity;
@@ -35,6 +35,9 @@ public class MainMenu extends JFrame {
     private final int WINDOW_WIDTH_MAIN = 800;
     private final int WINDOW_HEIGHT_MAIN = 500;
     private final int IMG_DIAMETER = 10;
+    private static int cycleCounter = 0;
+    private static final int CYCLE_COUNTER_LIMITY = 450;
+    private static final int CYCLE_INFECTED_LIMITY = 150;
 
     public MainMenu() {
         super("Covid-19 Simulation");
@@ -111,10 +114,12 @@ public class MainMenu extends JFrame {
         // button panel
         this.pnlBtnStartSimulation.add(this.btnStartSimulation);
 
+        // add to the main frame
         this.add(this.pnlTitle, BorderLayout.NORTH);
         this.add(this.pnlMain, BorderLayout.CENTER);
         this.add(this.pnlBtnStartSimulation, BorderLayout.SOUTH);
 
+        // we need to see the things. set visible to true
         this.setVisible(true);
     }//end constructor
 
@@ -201,17 +206,13 @@ public class MainMenu extends JFrame {
         private Timer time; //Timer class object that will fire events every LAG_TIME interval
         private final int WINDOW_WIDTH = 600;
         private final int WINDOW_HEIGHT = 400;
-        private final int IMG_DIAMETER = 10; //size of ball to be drawn
+//        private final int IMG_DIAMETER = 10; //size of ball to be drawn
 
         public Simulator(ArrayList<Person> arr) {
-
             this.time = new Timer(LAG_TIME, new BounceListener());
-
             this.personList = arr;
-
             this.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
             this.setBackground(Color.LIGHT_GRAY);
-
             this.time.start();
         } // end ctor
 
@@ -221,92 +222,161 @@ public class MainMenu extends JFrame {
             g.setColor(Color.PINK);
             for (Person person : personList) {
                 g.setColor(person.getBall().getColor());
-                g.fillOval(person.getBall().getxCoord(), person.getBall().getyCoord(), person.getBall().getDiameter(), person.getBall().getDiameter());
+                g.fillOval(person.getBall().getxCoord(), person.getBall().getyCoord(),
+                        person.getBall().getDiameter(), person.getBall().getDiameter());
             } // end for loop
         } // end paintComponent override method
 
         private class BounceListener implements ActionListener {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (Person person : personList)
-                    calcPosition(person.getBall());
+                    if (person.getIsAlive())
+                        calcPosition(person.getBall());
 
                 checkCollision();
-                //call repaint(), which in turn calls paintComponent()
-                repaint();
+                checkIfLive();
+
+                if (cycleCounter < CYCLE_COUNTER_LIMITY) {
+                    for (Person person : personList)
+                        if (person.getIsInfected())
+                            person.setCycleCounter(person.getCycleCounter() + 1);
+
+                    System.out.printf("Main Cycle %d\n", cycleCounter + 1);
+                    cycleCounter++;
+                    repaint();
+                }
+                // TODO: Report in percentage of everything in a else. Create a output file and print at the screen
+
             } // end actionPerformed override method
         } // enn inner listener class
 
-        private void checkCollision(){
+        private void checkCollision() {
             int deltaX;
             int deltaY;
             int firstBallX, firstBallY;
             int secondBallX, secondBallY;
 
             for (int i = 0; i < personList.size() - 1; i++) {
-                firstBallX = personList.get(i).getBall().getxCoord();
-                firstBallY = personList.get(i).getBall().getyCoord();
+                if (personList.get(i).getIsAlive()) {
+                    firstBallX = personList.get(i).getBall().getxCoord();
+                    firstBallY = personList.get(i).getBall().getyCoord();
+                    for (int j = i + 1; j < personList.size(); j++) {
+                        if (personList.get(j).getIsAlive()) {
+                            secondBallX = personList.get(j).getBall().getxCoord();
+                            secondBallY = personList.get(j).getBall().getyCoord();
 
-                for (int j = i + 1; j < personList.size(); j++) {
-                    secondBallX = personList.get(j).getBall().getxCoord();
-                    secondBallY = personList.get(j).getBall().getyCoord();
+                            //now calculate deltaX and deltaY for the pair of balls
+                            deltaX = firstBallX - secondBallX;
+                            deltaY = firstBallY - secondBallY;
+                            if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= IMG_DIAMETER)//if true, they have touched
+                            {
+                                personList.get(i).getBall().setxIncrement(personList.get(i).getBall().getxIncrement() * -1);
+                                personList.get(i).getBall().setyIncrement(personList.get(i).getBall().getyIncrement() * -1);
+                                personList.get(j).getBall().setxIncrement(personList.get(j).getBall().getxIncrement() * -1);
+                                personList.get(j).getBall().setyIncrement(personList.get(j).getBall().getyIncrement() * -1);
 
-                    //now calculate deltaX and deltaY for the pair of balls
-                    deltaX = firstBallX - secondBallX;
-                    deltaY = firstBallY - secondBallY;
-                    if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= IMG_DIAMETER)//if true, they have touched
-                    {
-                        personList.get(i).getBall().setxIncrement(personList.get(i).getBall().getxIncrement() * -1);
-                        personList.get(i).getBall().setyIncrement(personList.get(i).getBall().getyIncrement() * -1);
-                        personList.get(j).getBall().setxIncrement(personList.get(j).getBall().getxIncrement() * -1);
-                        personList.get(j).getBall().setyIncrement(personList.get(j).getBall().getyIncrement() * -1);
+                                int firstBallNewxIncrement = (int) (Math.random() * 11 - 5);
+                                int firstBallNewyIncrement = (int) (Math.random() * 11 - 5);
+                                int secondBallNewxIncrement = (int) (Math.random() * 11 - 5);
+                                int secondBallNewyIncrement = (int) (Math.random() * 11 - 5);
 
-                        int firstBallNewxIncrement = (int) (Math.random() * 11 - 5);
-                        int firstBallNewyIncrement = (int) (Math.random() * 11 - 5);
-                        int secondBallNewxIncrement = (int) (Math.random() * 11 - 5);
-                        int secondBallNewyIncrement = (int) (Math.random() * 11 - 5);
+                                personList.get(i).getBall().setxIncrement(firstBallNewxIncrement);
+                                personList.get(i).getBall().setyIncrement(firstBallNewyIncrement);
+                                personList.get(j).getBall().setxIncrement(secondBallNewxIncrement);
+                                personList.get(j).getBall().setyIncrement(secondBallNewyIncrement);
 
-                        personList.get(i).getBall().setxIncrement(firstBallNewxIncrement);
-                        personList.get(i).getBall().setyIncrement(firstBallNewyIncrement);
-                        personList.get(j).getBall().setxIncrement(secondBallNewxIncrement);
-                        personList.get(j).getBall().setyIncrement(secondBallNewyIncrement);
-
-
-                        if (personList.get(i).getIsInfected() && !personList.get(j).getIsInfected())
-                            changeColor(i,j);
-                        if (personList.get(j).getIsInfected() && !personList.get(i).getIsInfected())
-                            changeColor(j,i);
-                    }//end if
-                }//end inner for
+                                if (personList.get(i).getIsInfected() && !personList.get(j).getIsInfected())
+                                    changeColor(j);
+                                if (personList.get(j).getIsInfected() && !personList.get(i).getIsInfected())
+                                    changeColor(i);
+                            }//end if
+                        }//end inner for loop
+                    } // end outer for loop
+                } // end if block
             }//end outer loop
+        } // end checkCollision method
+
+        private void checkIfLive() {
+            for (Person person : personList) {
+                if (person.getCycleCounter() == CYCLE_INFECTED_LIMITY) {
+                    double probOfDeath = Math.random() * 101;
+                    switch (person.getImmunityStatus()) {
+                        case ONE_SHOT:
+                            if (probOfDeath >= 95) {
+                                person.setIsAlive(false);
+                                person.getBall().setColor(Color.black);
+//
+                            } else {
+                                person.setIsInfected(false);
+                                person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
+                                person.getBall().setColor(Color.GREEN);
+                                person.setCycleCounter(0);
+                            }
+                            break;
+                        case TWO_SHOT:
+                            if (probOfDeath >= 99) {
+                                person.setIsAlive(false);
+                                person.getBall().setColor(Color.black);
+                            } else {
+                                person.setIsInfected(false);
+                                person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
+                                person.getBall().setColor(Color.GREEN);
+                                person.setCycleCounter(0);
+                            }
+                            break;
+                        case IMMUNE:
+                            if (probOfDeath >= 99.7) {
+                                person.setIsAlive(false);
+                                person.getBall().setColor(Color.black);
+                            } else {
+                                person.setIsInfected(false);
+                                person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
+                                person.getBall().setColor(Color.GREEN);
+                                person.setCycleCounter(0);
+                            }
+                            break;
+                        case NO_IMMUNITY:
+                            if (probOfDeath >= 90) {
+                                person.setIsAlive(false);
+                                person.getBall().setColor(Color.black);
+                            } else {
+                                person.setIsInfected(false);
+                                person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
+                                person.getBall().setColor(Color.GREEN);
+                                person.setCycleCounter(0);
+                            }
+                            break;
+                        default:
+                            person.setIsInfected(false);
+                            person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
+                            person.getBall().setColor(Color.GREEN);
+                            person.setCycleCounter(0);
+                            break;
+                    }
+                }
+            }
         }
 
-        // Vamos fazer um break?
-        // Vou fazer pao
-        // Ja dei push no git
-
-
-
-        private void changeColor(int infected_idx, int uninfected_idx){
-            double probability = Math.random() * 101;
+        private void changeColor(int uninfected_idx) {
+            double probability = Math.random() * 100;
             switch (personList.get(uninfected_idx).getImmunityStatus()) {
                 case IMMUNE:
                 case TWO_SHOT:
-                    if(probability > 90){
-                        personList.get(uninfected_idx).getBall().setColor(personList.get(infected_idx).getBall().getColor());
+                    if (probability > 90) {
+                        personList.get(uninfected_idx).getBall().setColor(Color.RED);
                         personList.get(uninfected_idx).setIsInfected(true);
                     }
                     break;
                 case ONE_SHOT:
-                    if(probability > 60){
-                        personList.get(uninfected_idx).getBall().setColor(personList.get(infected_idx).getBall().getColor());
+                    if (probability > 60) {
+                        personList.get(uninfected_idx).getBall().setColor(Color.RED);
                         personList.get(uninfected_idx).setIsInfected(true);
                     }
                     break;
                 default:
-                    if(probability > 20){
-                        personList.get(uninfected_idx).getBall().setColor(personList.get(infected_idx).getBall().getColor());
+                    if (probability > 20) {
+                        personList.get(uninfected_idx).getBall().setColor(Color.RED);
                         personList.get(uninfected_idx).setIsInfected(true);
                     }
                     break;
@@ -314,6 +384,7 @@ public class MainMenu extends JFrame {
         } // end changeColor method
 
         public void calcPosition(Ball ball) {
+
 
             //check if near boundary. If so, then apply negative operator to the relevant increment
             //Changed the operators to >= and <= from == to fix the "disappearing ball" problem
@@ -325,7 +396,6 @@ public class MainMenu extends JFrame {
             {
                 //if true, we're at left edge, flip the flag
                 ball.setxIncrement(ball.getxIncrement() * -1);
-                ;
             }
             if (ball.getyCoord() >= WINDOW_HEIGHT - ball.getDiameter()) {
                 ball.setyIncrement(ball.getyIncrement() * -1);
@@ -333,7 +403,6 @@ public class MainMenu extends JFrame {
             if (ball.getyCoord() <= 0) {
                 //if true, we're at left edge, flip the flag
                 ball.setyIncrement(ball.getyIncrement() * -1);
-                ;
             }
             //adjust the ball positions using the getters and setters
             ball.setxCoord(ball.getxCoord() + ball.getxIncrement());
