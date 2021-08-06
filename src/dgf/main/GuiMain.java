@@ -71,9 +71,12 @@ public class GuiMain extends JFrame {
         this.pnlReportSim.setLayout(new GridLayout(2,1));
 
         this.pnlReportSimCounters = new JPanel();
-        this.pnlReportSimCounters.setLayout(new GridLayout(3,2));
+        this.pnlReportSimCounters.setLayout(new GridLayout(4,1));
         this.pnlReportSimCounters.setBorder(new TitledBorder("Real time counter"));
         this.pnlReportSimCounters.add(Simulator.lblPopContracted);
+        this.pnlReportSimCounters.add(Simulator.lblPopFullyContracted);
+        this.pnlReportSimCounters.add(Simulator.lblPopPartContracted);
+        this.pnlReportSimCounters.add(Simulator.lblPopNoShotContracted);
         this.pnlReportSimPerc = new JPanel();
         this.pnlReportSimPerc.setLayout(new GridLayout(3,2));
         this.pnlReportSimPerc.setBorder(new TitledBorder("Resume Percentage"));
@@ -201,7 +204,7 @@ public class GuiMain extends JFrame {
                 if (!statusString.contains("population"))
                     statusLabel.setText(((JSlider) e.getSource()).getValue() + "%");
                 else
-                    statusLabel.setText("Population: " + ((JSlider) e.getSource()).getValue() + 1);
+                    statusLabel.setText("Population: " + ((JSlider) e.getSource()).getValue());
 //                System.out.println(e.getSource().toString());
 //                reportLabel.setText(reportLabel.getText() + ((JSlider) e.getSource()).getValue() / 100.0);
             }

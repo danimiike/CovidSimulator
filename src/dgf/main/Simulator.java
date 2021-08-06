@@ -19,6 +19,10 @@ public class Simulator extends JPanel {
     private static final int CYCLE_INFECTED_LIMIT = 150;
 
     protected static JLabel lblPopContracted = new JLabel("Infected:-");
+    protected static JLabel lblPopFullyContracted = new JLabel("Fully Vaccinated Infected:-");
+    protected static JLabel lblPopPartContracted = new JLabel("Partially Vaccinated Infected:-");
+    protected static JLabel lblPopNoShotContracted = new JLabel("Non Vaccinated Infected:-");
+
 
 //            , lblNonVacContracted, lblPartVacContracted, lblFullyVacContracted, lblRecovered, lblDied;
 
@@ -228,6 +232,11 @@ public class Simulator extends JPanel {
                         totalIntected++;
                 }
                 lblPopContracted.setText("Infected: " + totalIntected);
+                lblPopFullyContracted.setText("Fully Vaccinated Infected: " + cFullyVacContracted);
+                lblPopPartContracted.setText("Partially Vaccinated Infected: " + cPartVacContracted);
+                lblPopNoShotContracted.setText("Non Vaccinated Infected: " + cNonVacContracted);
+                
+                
                 repaint();
             } else {
                 for (Person person : personList) {
