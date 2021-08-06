@@ -25,7 +25,7 @@ public class MainMenu extends JFrame {
     private JSlider sldrPopulation, sldrNotVaccinated, sldrOneShot, sldrTwoShot, sldrImmunity;
     private JLabel lblMainTitle;
     private JLabel lblPopulation, lblNotVaccinated, lblOneShot, lblTwoShot, lblImmunity;
-    private JLabel lblStatusPopulation, lblStatusNotVaccinated, lblStatusOneShot, lblStatusTwoShot, lblStatusImmunity;
+    private JLabel lblStatusPopulation, lblStatusNotVaccinated, lblStatusOneShot, lblStatusTwoShot, lblStatusImmunity, lblStatusTotal;
     private JPanel pnlTitle, pnlMain, pnlPopulation, pnlImmunityStatus, pnlBtnStartSimulation;
     //   private int qtyPerson, popTwoShot, popOneShot, popNoShot, popNatImmunity;
     JButton btnStartSimulation;
@@ -39,6 +39,7 @@ public class MainMenu extends JFrame {
     private static final int CYCLE_COUNTER_LIMITY = 450;
     private static final int CYCLE_INFECTED_LIMITY = 150;
 
+    private int temp = 0;
     public MainMenu() {
         super("Covid-19 Simulation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,7 +52,7 @@ public class MainMenu extends JFrame {
         this.pnlTitle = new JPanel();
         this.pnlPopulation = new JPanel();
         this.pnlPopulation.setLayout(new GridLayout(1, 3));
-        this.pnlImmunityStatus = new JPanel(new GridLayout(4, 3));
+        this.pnlImmunityStatus = new JPanel(new GridLayout(5, 3));
         this.pnlImmunityStatus.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
         this.pnlMain = new JPanel();
         this.pnlMain.setLayout(new BorderLayout(0, 20));
@@ -71,15 +72,21 @@ public class MainMenu extends JFrame {
         this.lblStatusOneShot = new JLabel("Choose a value: ", JLabel.CENTER);
         this.lblStatusTwoShot = new JLabel("Choose a value: ", JLabel.CENTER);
         this.lblStatusImmunity = new JLabel("Choose a value: ", JLabel.CENTER);
-
+        this.lblStatusTotal = new JLabel("Total value: ", JLabel.CENTER);
 
         // initialize sliders
         this.sldrPopulation = this.setSliderConfig(this.lblStatusPopulation, 5000, 100, 500);
+//        int temp =+ this.sldrPopulation.getValue();
         this.sldrNotVaccinated = this.setSliderConfig(this.lblStatusNotVaccinated, 100, 5, 10);
+//        temp =+ this.sldrNotVaccinated.getValue();
         this.sldrOneShot = this.setSliderConfig(this.lblStatusOneShot, 100, 5, 10);
+//        temp =+this.sldrOneShot.getValue();
         this.sldrTwoShot = this.setSliderConfig(this.lblStatusTwoShot, 100, 5, 10);
+//        temp =+ this.sldrTwoShot.getValue();
         this.sldrImmunity = this.setSliderConfig(this.lblStatusImmunity, 100, 5, 10);
-
+//        temp =+ this.sldrImmunity.getValue();
+       
+        
         // Initialize buttons
         this.btnStartSimulation = new JButton("Start Simulation");
         this.btnStartSimulation.setFont(font);
@@ -108,6 +115,12 @@ public class MainMenu extends JFrame {
         this.pnlImmunityStatus.add(this.lblImmunity);
         this.pnlImmunityStatus.add(this.sldrImmunity);
         this.pnlImmunityStatus.add(this.lblStatusImmunity);
+        
+        this.pnlImmunityStatus.add(new JLabel());
+        this.pnlImmunityStatus.add(new JLabel());
+        this.pnlImmunityStatus.add(this.lblStatusTotal);
+        
+        
         // main panel (will contain the population and the immunity status panels)
         this.pnlMain.add(this.pnlPopulation, BorderLayout.NORTH);
         this.pnlMain.add(this.pnlImmunityStatus, BorderLayout.CENTER);
@@ -135,7 +148,10 @@ public class MainMenu extends JFrame {
             int popOneShot = sldrOneShot.getValue() * pop / 100;
             int popTwoShot = sldrTwoShot.getValue() * pop / 100;
             int popImmunity = sldrImmunity.getValue() * pop / 100;
-
+            
+           if(popNotVaccinated + popOneShot + popTwoShot + popImmunity == 1) {
+        	   
+          
             Person infected = new Person(true, true, ImmunityStatus.Status.NO_IMMUNITY,
                     new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH_MAIN, WINDOW_HEIGHT_MAIN));
             personList.add(infected);
@@ -166,6 +182,11 @@ public class MainMenu extends JFrame {
             } // end for loop
 
             callSimulator(personList);
+           }
+           else {
+        	   JOptionPane.showMessageDialog(null, "ERROR: The sum of Immunity inputs should be 100%.");
+           }
+           
         } // end actionPerformed
     } // end inner listener class
 
@@ -194,6 +215,8 @@ public class MainMenu extends JFrame {
         slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 statusLabel.setText("Value : " + ((JSlider) e.getSource()).getValue());
+                temp += ((JSlider) e.getSource()).getValue();
+                lblStatusTotal.setText("Total Percent: " + temp); 
             }
         });
         return slider;
