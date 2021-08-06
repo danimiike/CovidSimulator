@@ -8,9 +8,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Simulator extends JPanel {
-    private ArrayList<Person> personList;
+    private static ArrayList<Person> personList;
     private final int LAG_TIME = 200; // time in milliseconds between re-paints of screen
-    private Timer time; //Timer class object that will fire events every LAG_TIME interval
+    private static Timer time; //Timer class object that will fire events every LAG_TIME interval
     private final int WINDOW_WIDTH_SIMULATOR = 450;
     private final int WINDOW_HEIGHT_SIMULATOR = 300;
     private final int IMG_DIAMETER = 10;
@@ -18,14 +18,19 @@ public class Simulator extends JPanel {
     private static final int CYCLE_COUNTER_LIMIT = 450;
     private static final int CYCLE_INFECTED_LIMIT = 150;
 
+    protected static JLabel lblPopContracted = new JLabel("Infected:-");
+
+//            , lblNonVacContracted, lblPartVacContracted, lblFullyVacContracted, lblRecovered, lblDied;
+
+    private int cPopContracted = 0, cNonVacContracted = 0, cPartVacContracted = 0, cFullyVacContracted = 0, cRecovered = 0, cDied = 0;
 
     public Simulator(ArrayList<Person> arr) {
-        this.time = new Timer(LAG_TIME, new BounceListener());
-        this.personList = arr;
+        time = new Timer(LAG_TIME, new BounceListener());
+        personList = arr;
         this.setLayout(new BorderLayout(5, 5));
         this.setPreferredSize(new Dimension(WINDOW_WIDTH_SIMULATOR, WINDOW_HEIGHT_SIMULATOR));
         this.setBackground(Color.LIGHT_GRAY);
-        this.time.start();
+        time.start();
     }
 
     @Override
@@ -39,32 +44,7 @@ public class Simulator extends JPanel {
         } // end for loop
     } // end paintComponent override method
 
-    private class BounceListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            for (Person person : personList)
-                if (person.getIsAlive())
-                    calcPosition(person.getBall());
 
-            checkCollision();
-            checkIfLive();
-
-            if (cycleCounter < CYCLE_COUNTER_LIMIT) {
-                for (Person person : personList)
-                    if (person.getIsInfected())
-                        person.setCycleCounter(person.getCycleCounter() + 1);
-
-                System.out.printf("Main Cycle %d\n", cycleCounter + 1);
-                cycleCounter++;
-                repaint();
-            }
-            // TODO: Report in percentage of everything in a else. Create a output file and print at the screen
-
-        } // end actionPerformed override method
-
-
-
-    } // enn inner listener class
     private void checkCollision() {
         int deltaX;
         int deltaY;
@@ -101,9 +81,9 @@ public class Simulator extends JPanel {
                             personList.get(j).getBall().setyIncrement(secondBallNewyIncrement);
 
                             if (personList.get(i).getIsInfected() && !personList.get(j).getIsInfected())
-                                changeColor(j);
+                                checkIfGetInfected(j);
                             if (personList.get(j).getIsInfected() && !personList.get(i).getIsInfected())
-                                changeColor(i);
+                                checkIfGetInfected(i);
                         }//end if
                     }//end inner for loop
                 } // end outer for loop
@@ -116,83 +96,62 @@ public class Simulator extends JPanel {
             if (person.getCycleCounter() == CYCLE_INFECTED_LIMIT) {
                 double probabilityOfDeath = Math.random() * 100;
                 switch (person.getImmunityStatus()) {
-                    case ONE_SHOT:
-                        liveOrDie(person, probabilityOfDeath, 95);
-                        break;
-                    case TWO_SHOT:
-                        if (probabilityOfDeath >= 99) {
-                            person.setIsAlive(false);
-                            person.getBall().setColor(Color.black);
-                        } else {
-                            person.setIsInfected(false);
-                            person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
-                            person.getBall().setColor(Color.GREEN);
-                            person.setCycleCounter(0);
-                        }
-                        break;
-                    case IMMUNE:
-                        if (probabilityOfDeath >= 99.7) {
-                            person.setIsAlive(false);
-                            person.getBall().setColor(Color.black);
-                        } else {
-                            person.setIsInfected(false);
-                            person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
-                            person.getBall().setColor(Color.GREEN);
-                            person.setCycleCounter(0);
-                        }
-                        break;
-                    case NO_IMMUNITY:
-                        if (probabilityOfDeath >= 90) {
-                            person.setIsAlive(false);
-                            person.getBall().setColor(Color.black);
-                        } else {
-                            person.setIsInfected(false);
-                            person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
-                            person.getBall().setColor(Color.GREEN);
-                            person.setCycleCounter(0);
-                        }
-                        break;
+                    case NO_IMMUNITY -> liveOrDie(person, probabilityOfDeath, 90);
+                    case ONE_SHOT -> liveOrDie(person, probabilityOfDeath, 95);
+                    case TWO_SHOT -> liveOrDie(person, probabilityOfDeath, 99);
+                    case IMMUNE -> liveOrDie(person, probabilityOfDeath, 99.7);
                 }
             }
         }
-    }
+    } // end checkLive
 
-    private void liveOrDie(Person person, double probability, int probabilityOfLive){
+    private void liveOrDie(Person person, double probability, double probabilityOfLive) {
         if (probability >= probabilityOfLive) {
             person.setIsAlive(false);
             person.getBall().setColor(Color.black);
+            cDied++;
         } else {
             person.setIsInfected(false);
             person.setImmunityStatus(ImmunityStatus.Status.IMMUNE);
             person.getBall().setColor(Color.GREEN);
             person.setCycleCounter(0);
+            if (person.timeInfected <= 1)
+                cRecovered++;
         }
     }
 
-    private void changeColor(int uninfected_idx) {
+    private void checkIfGetInfected(int uninfected_idx) {
         double probability = Math.random() * 100;
         switch (personList.get(uninfected_idx).getImmunityStatus()) {
             case IMMUNE:
+                changeColor(personList.get(uninfected_idx), probability, 90);
+                break;
             case TWO_SHOT:
-                if (probability > 90) {
-                    personList.get(uninfected_idx).getBall().setColor(Color.RED);
-                    personList.get(uninfected_idx).setIsInfected(true);
-                }
+                changeColor(personList.get(uninfected_idx), probability, 90);
+                if (personList.get(uninfected_idx).timeInfected < 1)
+                    cFullyVacContracted++;
                 break;
             case ONE_SHOT:
-                if (probability > 60) {
-                    personList.get(uninfected_idx).getBall().setColor(Color.RED);
-                    personList.get(uninfected_idx).setIsInfected(true);
-                }
+                changeColor(personList.get(uninfected_idx), probability, 60);
+                if (personList.get(uninfected_idx).timeInfected < 1)
+                    cPartVacContracted++;
                 break;
             default:
-                if (probability > 20) {
-                    personList.get(uninfected_idx).getBall().setColor(Color.RED);
-                    personList.get(uninfected_idx).setIsInfected(true);
-                }
+                changeColor(personList.get(uninfected_idx), probability, 20);
+                if (personList.get(uninfected_idx).timeInfected < 1)
+                    cNonVacContracted++;
                 break;
         } // end switch
     } // end changeColor method
+
+    private void changeColor(Person person, double probability, int chance) {
+        if (probability > chance) {
+            person.getBall().setColor(Color.RED);
+            person.setIsInfected(true);
+
+            person.timeInfected++;
+        }
+    } // end changeColor
 
     public void calcPosition(Ball ball) {
 
@@ -219,5 +178,79 @@ public class Simulator extends JPanel {
         ball.setxCoord(ball.getxCoord() + ball.getxIncrement());
         ball.setyCoord(ball.getyCoord() + ball.getyIncrement());
     } // end calcPosition method
+
+    protected static class MenuListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            switch (e.getActionCommand()) {
+                case "Pause":
+                    time.stop();
+                    break;
+                case "Resume":
+                    time.start();
+                    break;
+                default:
+                    break;
+            } // end switch
+        } // end
+    }
+
+    private class ReportLabelListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private class BounceListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (Person person : personList)
+                if (person.getIsAlive())
+                    calcPosition(person.getBall());
+
+            checkCollision();
+            checkIfLive();
+
+            if (cycleCounter < CYCLE_COUNTER_LIMIT) {
+                for (Person person : personList)
+                    if (person.getIsInfected())
+                        person.setCycleCounter(person.getCycleCounter() + 1);
+
+                System.out.printf("Main Cycle %d\n", cycleCounter + 1);
+                cycleCounter++;
+                for (Person person : personList) {
+                    if (person.timeInfected == 1)
+                        cPopContracted++;
+                }
+                lblPopContracted.setText("Infected: " + cPopContracted);
+                repaint();
+            } else {
+
+                double percTotal = cPopContracted * 100.0 / personList.size();
+                double percNonVac = cNonVacContracted * 100.0 / personList.size();
+                double percPartVac = cPartVacContracted * 100.0 / personList.size();
+                double percFullyVac = cFullyVacContracted * 100.0 / personList.size();
+                double percRecovered = cRecovered * 100.0 / personList.size();
+                double percDied = cDied * 100.0 / personList.size();
+
+                System.out.printf("Total population who contracted the disease %-10.2f (%d)\n", percTotal, cPopContracted);
+                System.out.printf("Total non vac who contracted the disease %-10.2f (%d)\n", percNonVac, cNonVacContracted);
+                System.out.printf("Total parc vac who contracted the disease %-10.2f (%d)\n", percPartVac, cPartVacContracted);
+                System.out.printf("Total fully vac who contracted the disease %-10.2f (%d)\n", percFullyVac, cFullyVacContracted);
+                System.out.printf("Total recovered who contracted the disease %-10.2f (%d)\n", percRecovered, cRecovered);
+                System.out.printf("Total died who contracted the disease %-10.2f (%d)\n", percDied, cDied);
+
+                time.stop();
+            }
+            // TODO: Report in percentage of everything in a else. Create a output file and print at the screen
+
+        } // end actionPerformed override method
+
+
+    } // enn inner listener class
 
 } // end Simulator class

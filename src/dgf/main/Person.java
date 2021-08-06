@@ -14,18 +14,23 @@ public class Person {
 
     private boolean isAlive;
     private boolean isInfected;
+    protected int timeInfected;
+
+
     private ImmunityStatus.Status immunityStatus;
 
     private Ball ball;
 
     private int cycleCounter;
 
-    public Person(boolean isAlive, boolean isInfected, ImmunityStatus.Status immunityStatus, Ball ball) {//user inputs
+    public Person(boolean isAlive, boolean isInfected, int timeInfected, ImmunityStatus.Status immunityStatus, Ball ball) {//user inputs
         this.isAlive = isAlive;
         this.isInfected = isInfected;
         this.immunityStatus = immunityStatus;
+        this.timeInfected = timeInfected;
         this.cycleCounter = 0;
         this.ball = ball;
+
     } //end constructor
 
     //getters and setters
@@ -44,9 +49,11 @@ public class Person {
     public ImmunityStatus.Status getImmunityStatus() {
         return immunityStatus;
     }
+
     public Ball getBall() {
         return ball;
     }
+
     public void setCycleCounter(int cycleCounter) {
         this.cycleCounter = cycleCounter;
     }
@@ -62,10 +69,11 @@ public class Person {
     public void setImmunityStatus(ImmunityStatus.Status immunityStatus) {
         this.immunityStatus = immunityStatus;
     }
-    
+
     public void setBallProperties(Ball newBall) {
         this.ball = newBall;
     }
+
 
 
 }
