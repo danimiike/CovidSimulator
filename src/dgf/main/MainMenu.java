@@ -169,15 +169,15 @@ public class MainMenu extends JFrame {
         } // end actionPerformed
     } // end inner listener class
 
-    private void callSimulator(ArrayList<Person> arr) {
+    private void callSimulator(ArrayList<Person> arr){
         this.pnlTitle.setVisible(false);
         this.pnlPopulation.setVisible(false);
         this.pnlImmunityStatus.setVisible(false);
         this.pnlMain.setVisible(false);
         this.pnlBtnStartSimulation.setVisible(false);
 
-        this.getContentPane().setBackground(Color.BLUE);
-        this.setSize(WINDOW_WIDTH_MAIN + 100, WINDOW_HEIGHT_MAIN + 100);
+  //      this.getContentPane().setBackground(Color.BLUE);
+  //      this.setSize(WINDOW_WIDTH_MAIN + 100, WINDOW_HEIGHT_MAIN + 100);
 
         this.getContentPane().add(new Simulator(arr), BorderLayout.CENTER);
 //        this.pack();
@@ -208,14 +208,65 @@ public class MainMenu extends JFrame {
         private final int WINDOW_HEIGHT = 400;
 //        private final int IMG_DIAMETER = 10; //size of ball to be drawn
 
+        //menu variables
+        private JMenuBar menuBar = new JMenuBar();
+        private JMenu systemMenu, about;
+        private JMenuItem Pause, Resume, student1, student2, student3;
+        Font font = new Font("Times New Roman", Font.PLAIN, 20);
+        
         public Simulator(ArrayList<Person> arr) {
             this.time = new Timer(LAG_TIME, new BounceListener());
             this.personList = arr;
+            this.setLayout(new BorderLayout(5,5));
             this.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
-            this.setBackground(Color.LIGHT_GRAY);
+            this.setBackground(Color.WHITE);
             this.time.start();
-        } // end ctor
+            
+            //menuBar
+            this.add(menuBar, BorderLayout.NORTH);
+            systemMenu = new JMenu("System Menu");
+            systemMenu.setFont(font);
+            about = new JMenu("About");
+            about.setFont(font);
 
+            menuBar.add(systemMenu);
+            menuBar.add(about);
+            menuBar.setFont(font);
+            
+            
+            MenuItemListener menuItemListener = new MenuItemListener();
+            
+            Pause = systemMenu.add("Pause");
+            Pause.setFont(font);
+            Pause.setActionCommand("Pause");
+            Pause.addActionListener(menuItemListener);
+            Resume = systemMenu.add("Resume");
+            Resume.setFont(font);
+            Resume.setActionCommand("Resume");
+            Resume.addActionListener(menuItemListener);
+            student1 = about.add("Danielle Menezes de Mello Miike");
+            student2 = about.add("Felipe Lopes Leite");
+            student3 = about.add("Georgia Pattern");
+
+            
+        } // end ctor
+       
+        class MenuItemListener implements ActionListener {
+            public void actionPerformed(ActionEvent e) {  
+            	
+               switch(e.getActionCommand()) {
+               
+               case "Pause":
+            	   time.stop();
+            	   break;
+               case "Resume":
+            	   time.start();
+            	   break;
+               default:
+            	   break;   
+               }           
+            }    
+         }
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
