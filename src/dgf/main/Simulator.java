@@ -222,14 +222,18 @@ public class Simulator extends JPanel {
 
                 System.out.printf("Main Cycle %d\n", cycleCounter + 1);
                 cycleCounter++;
+                int totalIntected = 0;
+                for (Person person : personList) {
+                    if (person.getIsInfected())
+                        totalIntected++;
+                }
+                lblPopContracted.setText("Infected: " + totalIntected);
+                repaint();
+            } else {
                 for (Person person : personList) {
                     if (person.timeInfected == 1)
                         cPopContracted++;
                 }
-                lblPopContracted.setText("Infected: " + cPopContracted);
-                repaint();
-            } else {
-
                 double percTotal = cPopContracted * 100.0 / personList.size();
                 double percNonVac = cNonVacContracted * 100.0 / personList.size();
                 double percPartVac = cPartVacContracted * 100.0 / personList.size();
