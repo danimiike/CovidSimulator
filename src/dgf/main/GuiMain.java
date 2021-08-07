@@ -1,7 +1,6 @@
 package dgf.main;
 
 
-import javax.print.attribute.standard.JobName;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
@@ -16,31 +15,42 @@ public class GuiMain extends JFrame {
     private JSlider sldrPopulation, sldrNotVaccinated, sldrOneShot, sldrTwoShot, sldrImmunity;
     private JLabel lblPopulation, lblNotVaccinated, lblOneShot, lblTwoShot, lblImmunity;
     private JLabel lblStatusPopulation, lblStatusNotVaccinated, lblStatusOneShot, lblStatusTwoShot, lblStatusImmunity;
-    private JLabel lblReportPop_T, lblReportPop_N_I, lblReportPop_O_S, lblReportPop_T_S, lblReportPop_I;
-    // TODO: About labels
+    private JLabel lblReportPop_N_I, lblReportPop_O_S, lblReportPop_T_S, lblReportPop_I;
     private JPanel pnlMain, pnlInput, pnlInputPopulation, pnlInputImmunity, pnlInputBtn, pnlReport, pnlSimulation;
-    private JPanel pnlReportInput, pnlReportSim, pnlReportSimCounters, pnlReportSimPerc, pnlReportDetails;
+    private JPanel pnlReportLeft, pnlReportInput, pnlReportLabels, pnlReportSim, pnlReportSimCounters, pnlReportSimPerc;
 
-    private JButton btnStartSimulation;
+    private JButton btnStartSimulation, btnResumeSimulation, btnPauseSimulation;
     private JMenuBar mnbMain;
     private JMenu mnOptions, mnAbout;
-    private JMenuItem mniPause, mniResume;
+    private JMenuItem mniPause, mniResume, mniAuthor, mniPurpose;
 
     private final int WINDOW_WIDTH_SIMULATION = 600;
-    private final int WINDOW_HEIGHT_SIMULATION = 580;
-    private final int IMG_DIAMETER = 10;
+    private final int WINDOW_HEIGHT_SIMULATION = 545;
+    private final int IMG_DIAMETER = 7;
     private final Font FONT_TITLE = new Font("Times New Roman", Font.PLAIN, 20);
     private final Font sliderFont = new Font("Times New Roman", Font.PLAIN, 10);
 
     private int pop, popNotVaccinated, popOneShot, popTwoShot, popImmunity;
+    private String errorMessage = "The total percentage needs to be less or equal to 100%";
+
+    protected static String[][] rows = {
+            {"Danielle Miike", "0910303", "02"},
+            {"Georgia Patten", "0937983", "01"},
+            {"Felipe Leite", "0920253", "02"}
+    };
+    private static final String[] IMMUNE_TYPE = {"Infected", "No Immunity", "One Vaccine", "Two Vaccine", "Natural Immune", "Deceased"};
+    private static final Color[] IMMUNE_COLOR = {Color.RED, Color.BLUE, Color.CYAN, Color.YELLOW, Color.GREEN, Color.BLACK};
+    protected static String[] cols = {"Student Name", "Student Id", "Section #"};
+    protected static final JTable AUTHOR_TABLE = new JTable(rows, cols);
+    protected static final JScrollPane AUTHOR_SCROLL_PANE = new JScrollPane(AUTHOR_TABLE);
 
 
     public GuiMain() {
         super("Covid-19 Simulation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
-        this.setLayout(new GridLayout(1, 2, 10, 0));
-
+        this.setLayout(new GridLayout(1, 2, 2, 0));
+        AUTHOR_SCROLL_PANE.setPreferredSize(new Dimension(300, AUTHOR_TABLE.getRowHeight() * rows.length + 23));
 
         // initialize panels
         this.pnlMain = new JPanel();
@@ -57,31 +67,43 @@ public class GuiMain extends JFrame {
         this.pnlInputImmunity.setLayout(new GridLayout(4, 3, 0, 0));
         this.pnlInputImmunity.setBorder(new TitledBorder("Levels of Immunity - The total should be 100%"));
         this.pnlInputBtn = new JPanel();
+        this.pnlInputBtn.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
         // report panel block
         this.pnlReport = new JPanel();
-        this.pnlReport.setLayout(new GridLayout(1, 3));
-//        this.pnlReport.setBorder(new TitledBorder("Report panel"));
+        this.pnlReport.setLayout(new GridLayout(1, 2));
         this.pnlReport.setSize(new Dimension(600, 400));
 
+        this.pnlReportLeft = new JPanel();
+        this.pnlReportLeft.setLayout(new GridLayout(2, 1));
+
         this.pnlReportInput = new JPanel();
-        this.pnlReportInput.setLayout(new GridLayout(5, 1));
-        this.pnlReportInput.setBorder(new TitledBorder("Input details"));
+        this.pnlReportInput.setLayout(new GridLayout(2, 2));
+        this.pnlReportInput.setBorder(new TitledBorder("Resume of total inputed"));
+
+
+        this.pnlReportLabels = new JPanel();
+        populateColourLabelsPanel();
+//        this.pnlReportLabels.setLayout(new GridLayout(6, 2, 30,0));
+//        this.pnlReportLabels.setBorder(new TitledBorder("Colour Labels"));
+//        for (int i = 0; i < IMMUNE_TYPE.length; i++) {
+//            JPanel colorPanel = new JPanel();
+//            colorPanel.setBackground(IMMUNE_COLOR[i]);
+//
+//            this.pnlReportLabels.add(colorPanel);
+//            this.pnlReportLabels.add(new JLabel(IMMUNE_TYPE[i]));
+//        }
+
 
         this.pnlReportSim = new JPanel();
-        this.pnlReportSim.setLayout(new GridLayout(2,1));
+        this.pnlReportSim.setLayout(new GridLayout(2, 1));
 
         this.pnlReportSimCounters = new JPanel();
-        this.pnlReportSimCounters.setLayout(new GridLayout(4,1));
-        this.pnlReportSimCounters.setBorder(new TitledBorder("Real time counter"));
-        this.pnlReportSimCounters.add(Simulator.lblPopContracted);
-        this.pnlReportSimCounters.add(Simulator.lblPopFullyContracted);
-        this.pnlReportSimCounters.add(Simulator.lblPopPartContracted);
-        this.pnlReportSimCounters.add(Simulator.lblPopNoShotContracted);
+        this.pnlReportSimCounters.setLayout(new GridLayout(3, 2));
+        this.pnlReportSimCounters.setBorder(new TitledBorder("Currently infected tracker - Real time counter"));
+
         this.pnlReportSimPerc = new JPanel();
-        this.pnlReportSimPerc.setLayout(new GridLayout(3,2));
-        this.pnlReportSimPerc.setBorder(new TitledBorder("Resume Percentage"));
-
-
+        this.pnlReportSimPerc.setLayout(new GridLayout(3, 2));
+        this.pnlReportSimPerc.setBorder(new TitledBorder("Final Data Presentation (% from population size)"));
 
 
         // simulation panel block
@@ -94,28 +116,30 @@ public class GuiMain extends JFrame {
         this.mnbMain = new JMenuBar();
         this.mnOptions = new JMenu("Options");
         this.mnAbout = new JMenu("About");
-        this.mniResume = new JMenuItem("Resume");
+        this.mniResume = new JMenuItem("Resume Simulation");
         this.mniResume.setEnabled(false);
         this.mniResume.addActionListener(new Simulator.MenuListener());
-        this.mniPause = new JMenuItem("Pause");
+        this.mniPause = new JMenuItem("Pause Simulation");
         this.mniPause.setEnabled(false);
         this.mniPause.addActionListener(new Simulator.MenuListener());
+        this.mniAuthor = new JMenuItem("Authors");
+        this.mniAuthor.addActionListener(new Simulator.MenuListener());
+        this.mniPurpose = new JMenuItem("Purpose");
+        this.mniPurpose.addActionListener(new Simulator.MenuListener());
 
         // populate menu containers
         this.mnOptions.add(this.mniResume);
         this.mnOptions.add(this.mniPause);
+        this.mnAbout.add(mniPurpose);
+        this.mnAbout.add(mniAuthor);
         this.mnbMain.add(this.mnOptions);
         this.mnbMain.add(this.mnAbout);
 
-
         // Initialize labels
-        this.lblReportPop_T = new JLabel("Total of population:-");
-        this.lblReportPop_N_I = new JLabel("Total of non vaccinated: -");
-        this.lblReportPop_O_S = new JLabel("Total of one-shot:-");
-        this.lblReportPop_T_S = new JLabel("Total of two-shot:-");
-        this.lblReportPop_I = new JLabel("Total of immune:-");
-
-        // TODO: Is there any other labels?
+        this.lblReportPop_N_I = new JLabel("Non vaccinated: -");
+        this.lblReportPop_O_S = new JLabel("One-shot:-");
+        this.lblReportPop_T_S = new JLabel("Two-shot:-");
+        this.lblReportPop_I = new JLabel("Immune:-");
 
         this.lblPopulation = new JLabel("Size of the population");
         this.lblNotVaccinated = new JLabel("People not Vaccinated");
@@ -135,11 +159,21 @@ public class GuiMain extends JFrame {
         this.sldrTwoShot = this.setSliderConfig(this.lblStatusTwoShot, this.lblTwoShot.getText(), 100, 5, 10);
         this.sldrImmunity = this.setSliderConfig(this.lblStatusImmunity, this.lblImmunity.getText(), 100, 5, 10);
 
-
         // Initialize buttons
-        this.btnStartSimulation = new JButton("Start Simulation");
+        this.btnStartSimulation = new JButton("Start");
         this.btnStartSimulation.setFont(FONT_TITLE);
+        this.btnStartSimulation.setPreferredSize(new Dimension(100, 25));
         this.btnStartSimulation.addActionListener(new ButtonListener());
+        this.btnResumeSimulation = new JButton("Resume");
+        this.btnResumeSimulation.setFont(FONT_TITLE);
+        this.btnResumeSimulation.setPreferredSize(new Dimension(100, 25));
+        this.btnResumeSimulation.addActionListener(new Simulator.MenuListener());
+        this.btnResumeSimulation.setEnabled(false);
+        this.btnPauseSimulation = new JButton("Pause");
+        this.btnPauseSimulation.setFont(FONT_TITLE);
+        this.btnPauseSimulation.setPreferredSize(new Dimension(100, 25));
+        this.btnPauseSimulation.addActionListener(new Simulator.MenuListener());
+        this.btnPauseSimulation.setEnabled(false);
 
         // populate the panels
         this.pnlInputPopulation.add(this.lblPopulation);
@@ -164,20 +198,40 @@ public class GuiMain extends JFrame {
         this.pnlInputImmunity.add(this.lblStatusImmunity);
         // populate btn panel
         this.pnlInputBtn.add(this.btnStartSimulation);
+        this.pnlInputBtn.add(this.btnResumeSimulation);
+        this.pnlInputBtn.add(this.btnPauseSimulation);
         // populate the input panel
         this.pnlInput.add(this.pnlInputPopulation, BorderLayout.NORTH);
         this.pnlInput.add(this.pnlInputImmunity, BorderLayout.CENTER);
         this.pnlInput.add(this.pnlInputBtn, BorderLayout.SOUTH);
 
         //populate the report input panel
-        this.pnlReportInput.add(this.lblReportPop_T);
         this.pnlReportInput.add(this.lblReportPop_N_I);
         this.pnlReportInput.add(this.lblReportPop_O_S);
         this.pnlReportInput.add(this.lblReportPop_T_S);
         this.pnlReportInput.add(this.lblReportPop_I);
+        // populate the left side report panel
+        this.pnlReportLeft.add(this.pnlReportInput);
+        this.pnlReportLeft.add(this.pnlReportLabels);
+        // populate report simulation panel
+        this.pnlReportSimCounters.add(Simulator.lblPopContracted);
+        this.pnlReportSimCounters.add(Simulator.lblPopNoShotContracted);
+        this.pnlReportSimCounters.add(Simulator.lblPopPartContracted);
+        this.pnlReportSimCounters.add(Simulator.lblPopFullyContracted);
+        this.pnlReportSimCounters.add(Simulator.lblRecovered);
+        this.pnlReportSimCounters.add(Simulator.lblDied);
+
+        this.pnlReportSimPerc.add(Simulator.lblPopPerc);
+        this.pnlReportSimPerc.add(Simulator.lblPopNoShotPerc);
+        this.pnlReportSimPerc.add(Simulator.lblPopPartPerc);
+        this.pnlReportSimPerc.add(Simulator.lblPopFullyPerc);
+        this.pnlReportSimPerc.add(Simulator.lblRecoveredPerc);
+        this.pnlReportSimPerc.add(Simulator.lblDiedPerc);
+
         this.pnlReportSim.add(this.pnlReportSimCounters);
         this.pnlReportSim.add(this.pnlReportSimPerc);
-        this.pnlReport.add(this.pnlReportInput);
+        // populate the main report panel
+        this.pnlReport.add(this.pnlReportLeft);
         this.pnlReport.add(this.pnlReportSim);
         // populate main panel with the input panel and the report panel
         this.pnlMain.add(pnlInput);
@@ -185,12 +239,31 @@ public class GuiMain extends JFrame {
 
         // populate the frame
         this.add(this.pnlMain);
-
         this.setJMenuBar(this.mnbMain);
-
         this.pack();
         this.setVisible(true);
     } // end GuiMain ctor
+
+    private void populateColourLabelsPanel() {
+        this.pnlReportLabels.setLayout(new GridBagLayout());
+        this.pnlReportLabels.setBorder(new TitledBorder("Colour Labels"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        for (int i = 0; i < IMMUNE_TYPE.length; i++) {
+            JPanel colorPanel = new JPanel();
+            colorPanel.setBackground(IMMUNE_COLOR[i]);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 0, 5, 5); // padding
+            gbc.gridx = i < 3 ? 0 : 2;
+            gbc.gridy = i < 3 ? i : i - 3;
+            this.pnlReportLabels.add(colorPanel, gbc);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 20); // padding
+            gbc.gridx = i < 3 ? 1: 3;
+            gbc.gridy = i < 3 ? i : i - 3;
+            this.pnlReportLabels.add(new JLabel(IMMUNE_TYPE[i]), gbc);
+
+        }
+    }
 
     private JSlider setSliderConfig(JLabel statusLabel, String statusString, int max, int minorSpace, int majorSpace) {
         JSlider slider = new JSlider(SwingConstants.HORIZONTAL, 0, max, 0);
@@ -204,9 +277,10 @@ public class GuiMain extends JFrame {
                 if (!statusString.contains("population"))
                     statusLabel.setText(((JSlider) e.getSource()).getValue() + "%");
                 else
-                    statusLabel.setText("Population: " + ((JSlider) e.getSource()).getValue());
-//                System.out.println(e.getSource().toString());
-//                reportLabel.setText(reportLabel.getText() + ((JSlider) e.getSource()).getValue() / 100.0);
+                    statusLabel.setText("Population: " + (int) (((JSlider) e.getSource()).getValue() + 1));
+                int sum = sldrNotVaccinated.getValue() + sldrOneShot.getValue() + sldrTwoShot.getValue() + sldrImmunity.getValue();
+                pnlInputImmunity.setBorder(new TitledBorder(
+                        "Levels of Immunity - The total should be 100% (so far " + sum + "%)"));
             }
         });
         return slider;
@@ -221,6 +295,8 @@ public class GuiMain extends JFrame {
         this.sldrTwoShot.setEnabled(false);
         this.sldrImmunity.setEnabled(false);
         this.btnStartSimulation.setEnabled(false);
+        this.btnResumeSimulation.setEnabled(true);
+        this.btnPauseSimulation.setEnabled(true);
         // enable
         this.mniResume.setEnabled(true);
         this.mniPause.setEnabled(true);
@@ -232,63 +308,67 @@ public class GuiMain extends JFrame {
     private class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+//            switch (e.getActionCommand()){
+//                case "Resume":
+//                    time.
+//                    break;
+//            }
             ArrayList<Person> personList = new ArrayList<>();
 
-            // TODO: Check the total value for the count. their sum need to be equals
             pop = sldrPopulation.getValue() + 1;
             popNotVaccinated = sldrNotVaccinated.getValue() * pop / 100;
             popOneShot = sldrOneShot.getValue() * pop / 100;
             popTwoShot = sldrTwoShot.getValue() * pop / 100;
             popImmunity = sldrImmunity.getValue() * pop / 100;
             int countPop = pop;
+            if (pop == 1) {
+                JOptionPane.showMessageDialog(null, "Please input a population other than one infected.",
+                        "Invalid population amount!", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                if (popNotVaccinated + popOneShot + popTwoShot + popImmunity > pop) {
+                    JOptionPane.showMessageDialog(null, errorMessage,
+                            "Invalid input selection", JOptionPane.INFORMATION_MESSAGE);
+                } else {
 
-            lblReportPop_T.setText(lblReportPop_T.getText().replace('-', ' ') + pop);
-            lblReportPop_N_I.setText(lblReportPop_N_I.getText().replace('-', ' ') + popNotVaccinated);
-            lblReportPop_O_S.setText(lblReportPop_O_S.getText().replace('-', ' ') + popOneShot);
-            lblReportPop_T_S.setText(lblReportPop_T_S.getText().replace('-', ' ') + popTwoShot);
-            lblReportPop_I.setText(lblReportPop_I.getText().replace('-', ' ') + popImmunity);
+                    lblReportPop_N_I.setText(lblReportPop_N_I.getText().replace('-', ' ') + popNotVaccinated);
+                    lblReportPop_O_S.setText(lblReportPop_O_S.getText().replace('-', ' ') + popOneShot);
+                    lblReportPop_T_S.setText(lblReportPop_T_S.getText().replace('-', ' ') + popTwoShot);
+                    lblReportPop_I.setText(lblReportPop_I.getText().replace('-', ' ') + popImmunity);
 
-            Person infected = new Person(true, true, 1, ImmunityStatus.Status.NO_IMMUNITY,
-                    new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION));
-            personList.add(infected);
+                    Person infected = new Person(true, true, 1, ImmunityStatus.Status.NO_IMMUNITY,
+                            new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION));
+                    personList.add(infected);
 
-            for (int i = 0; i < pop; i++) {
-                if (popNotVaccinated-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
-                    Person person = new Person(true, false, 0, ImmunityStatus.Status.NO_IMMUNITY, ballPerson);
-                    personList.add(person);
-                } else if (popOneShot-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.CYAN, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
-                    Person person = new Person(true, false, 0, ImmunityStatus.Status.ONE_SHOT, ballPerson);
-                    personList.add(person);
-                } else if (popTwoShot-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.YELLOW, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
-                    Person person = new Person(true, false, 0, ImmunityStatus.Status.TWO_SHOT, ballPerson);
-                    personList.add(person);
-                } else if (popImmunity-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.GREEN, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
-                    Person person = new Person(true, false, 0, ImmunityStatus.Status.IMMUNE, ballPerson);
-                    personList.add(person);
-                } else if (countPop-- > 0) {
-                    Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
-                    Person person = new Person(true, false, 0, ImmunityStatus.Status.NO_IMMUNITY, ballPerson);
-                    personList.add(person);
-                } // end
-                countPop--;
-            } // end for loop
+                    for (int i = 0; i < pop; i++) {
+                        if (popNotVaccinated-- > 0) {
+                            Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
+                            Person person = new Person(true, false, 0, ImmunityStatus.Status.NO_IMMUNITY, ballPerson);
+                            personList.add(person);
+                        } else if (popOneShot-- > 0) {
+                            Ball ballPerson = new Ball(IMG_DIAMETER, Color.CYAN, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
+                            Person person = new Person(true, false, 0, ImmunityStatus.Status.ONE_SHOT, ballPerson);
+                            personList.add(person);
+                        } else if (popTwoShot-- > 0) {
+                            Ball ballPerson = new Ball(IMG_DIAMETER, Color.YELLOW, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
+                            Person person = new Person(true, false, 0, ImmunityStatus.Status.TWO_SHOT, ballPerson);
+                            personList.add(person);
+                        } else if (popImmunity-- > 0) {
+                            Ball ballPerson = new Ball(IMG_DIAMETER, Color.GREEN, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
+                            Person person = new Person(true, false, 0, ImmunityStatus.Status.IMMUNE, ballPerson);
+                            personList.add(person);
+                        } else if (countPop-- > 0) {
+                            Ball ballPerson = new Ball(IMG_DIAMETER, Color.BLUE, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION);
+                            Person person = new Person(true, false, 0, ImmunityStatus.Status.NO_IMMUNITY, ballPerson);
+                            personList.add(person);
+                        } // end
+                        countPop--;
+                    } // end for loop
 
-            callSimulation(personList);
+                    callSimulation(personList);
+                }
+            }
         } // end actionPerformed
     } // end inner listener class
-
-
-    private class ReportListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            lblReportPop_T.setText((lblStatusPopulation.getText()));
-        }
-    }
 
     public static void main(String[] args) {
         new GuiMain();
