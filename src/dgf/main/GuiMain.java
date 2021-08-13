@@ -1,5 +1,15 @@
 package dgf.main;
 
+/**
+ * Program Name: dgf.main.GuiMain.java
+ * Purpose: This class is used to create the main menu to deal with user inputs an them be able to create the person and call the simulator
+ * 			class
+ * Coder: 	Danielle Miike
+ * 			Felipe Leite
+ * 			Georgia Patten
+ *
+ * Date: Aug 1, 2021
+ */
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -83,16 +93,6 @@ public class GuiMain extends JFrame {
 
         this.pnlReportLabels = new JPanel();
         populateColourLabelsPanel();
-//        this.pnlReportLabels.setLayout(new GridLayout(6, 2, 30,0));
-//        this.pnlReportLabels.setBorder(new TitledBorder("Colour Labels"));
-//        for (int i = 0; i < IMMUNE_TYPE.length; i++) {
-//            JPanel colorPanel = new JPanel();
-//            colorPanel.setBackground(IMMUNE_COLOR[i]);
-//
-//            this.pnlReportLabels.add(colorPanel);
-//            this.pnlReportLabels.add(new JLabel(IMMUNE_TYPE[i]));
-//        }
-
 
         this.pnlReportSim = new JPanel();
         this.pnlReportSim.setLayout(new GridLayout(2, 1));
@@ -263,7 +263,7 @@ public class GuiMain extends JFrame {
             this.pnlReportLabels.add(new JLabel(IMMUNE_TYPE[i]), gbc);
 
         }
-    }
+    }//end populateColourLabelsPanel
 
     private JSlider setSliderConfig(JLabel statusLabel, String statusString, int max, int minorSpace, int majorSpace) {
         JSlider slider = new JSlider(SwingConstants.HORIZONTAL, 0, max, 0);
@@ -308,11 +308,6 @@ public class GuiMain extends JFrame {
     private class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-//            switch (e.getActionCommand()){
-//                case "Resume":
-//                    time.
-//                    break;
-//            }
             ArrayList<Person> personList = new ArrayList<>();
 
             pop = sldrPopulation.getValue() + 1;
@@ -330,11 +325,19 @@ public class GuiMain extends JFrame {
                             "Invalid input selection", JOptionPane.INFORMATION_MESSAGE);
                 } else {
 
-                    lblReportPop_N_I.setText(lblReportPop_N_I.getText().replace('-', ' ') + popNotVaccinated);
+                	
+                    
                     lblReportPop_O_S.setText(lblReportPop_O_S.getText().replace('-', ' ') + popOneShot);
                     lblReportPop_T_S.setText(lblReportPop_T_S.getText().replace('-', ' ') + popTwoShot);
                     lblReportPop_I.setText(lblReportPop_I.getText().replace('-', ' ') + popImmunity);
-
+                    
+                    int dif = pop - (popOneShot + popTwoShot + popImmunity);
+                    if(popNotVaccinated == dif)
+                    	lblReportPop_N_I.setText(lblReportPop_N_I.getText().replace('-', ' ') + popNotVaccinated);
+                    else
+                    	lblReportPop_N_I.setText(lblReportPop_N_I.getText().replace('-', ' ') + dif);
+                    
+                    
                     Person infected = new Person(true, true, 1, ImmunityStatus.Status.NO_IMMUNITY,
                             new Ball(IMG_DIAMETER, Color.RED, WINDOW_WIDTH_SIMULATION, WINDOW_HEIGHT_SIMULATION));
                     personList.add(infected);

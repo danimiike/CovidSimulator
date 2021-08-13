@@ -1,4 +1,14 @@
 package dgf.main;
+/**
+ * Program Name: dgf.main.Ball.java
+ * Purpose: This is a class to create a dgf.main.Ball object that will be used in the
+ * 			Covid-19 Simulation application.
+ * Coder: 	Danielle Miike
+ * 			Felipe Leite
+ * 			Georgia Patten
+ *
+ * Date: Aug 1, 2021
+ */
 
 import java.awt.*;
 

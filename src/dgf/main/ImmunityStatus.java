@@ -2,7 +2,7 @@ package dgf.main;
 
 /**
  * Program Name: dgf.main.ImmunityStatus.java
- * Purpose: put something useful
+ * Purpose: Class to define the Person Immunity Status
  * Coder: 	Danielle Miike
  * 			Felipe Leite
  * 			Georgia Patten

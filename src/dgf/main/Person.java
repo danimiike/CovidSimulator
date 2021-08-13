@@ -2,12 +2,12 @@ package dgf.main;
 
 /**
  * Program Name: dgf.main.Person.java
- * Purpose:	this is a class to create a dgf.main.Person object that will be used in the
- * Covid-19 Simulation application.
+ * Purpose:	This is a class to create a dgf.main.Person object that will be used in the
+ * 			Covid-19 Simulation application.
  * Coder:	Danielle Menezes de Mello Miike
- * Felipe Lopes Leite
- * Georgia Pattern
- * Date: Jul 31, 2021
+ * 			Felipe Lopes Leite
+ *			 Georgia Pattern
+ * Date: 	Jul 31, 2021
  */
 
 public class Person {

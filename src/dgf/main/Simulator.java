@@ -1,5 +1,14 @@
 package dgf.main;
 
+/**
+ * Program Name: dgf.main.Simulator.java
+ * Purpose: This class is used to create the reports, and the simulation controls. 
+ * Coder: 	Danielle Miike
+ * 			Felipe Leite
+ * 			Georgia Patten
+ *
+ * Date: Aug 1, 2021
+ */
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +45,7 @@ public class Simulator extends JPanel {
     private DecimalFormat numberFormat = new DecimalFormat("0.00");
 
     protected static final String PURPOSE_STRING = """
+            DGF - TECHNOLOGY
             The purpose of this program is to simulate a pandemic.
             In this program a user will be able to choose the population,
             the percentage of people unvaccinated, the percentage of people
