@@ -1,7 +1,7 @@
 # CovidSimulator
 This will be our project repository. In here I will updade the README file with our last update.  
 ## How to use GIT
-Firstly, make sure that you have git ion your computer. Follow the instroctions:
+Firstly, make sure that you have git ion your computer. Follow the instructions:
 1. Open your PowerShell/CommandLine/Terminal and run  
   `git --version`
   If something show up displaying the version you have git installed. GOOD!
